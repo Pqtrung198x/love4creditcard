@@ -922,7 +922,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Phụ thu phí (VNĐ)</label>
-                    <input type="number" class="form-input" id="additionalFee" min="0" placeholder="Nhập số dương để thu thêm, số âm để giảm trừ (VD: 100000 hoặc -50000)">
+                    <input type="number" class="form-input" id="additionalFee" placeholder="Nhập số dương để thu thêm, số âm để giảm trừ (VD: 100000 hoặc -50000)">
                     <small style="color: var(--text-secondary); font-size: 0.7rem; display: block; margin-top: 3px;">
                         Số dương (+): Thu thêm | Số âm (-): Giảm trừ | Để trống: Không phụ thu
                     </small>
@@ -1163,9 +1163,9 @@
 
         function formatResult(result) {
             if (result > 0) {
-                return { text: `Nợ của khách ${formatMoney(result)}`, class: 'negative', icon: '⚠️' };
+                return { text: `Khách DƯ anh ${formatMoney(result)}`, class: 'negative', icon: '⚠️' };
             } else if (result < 0) {
-                return { text: `Khách Trả Phí ${formatMoney(Math.abs(result))}`, class: 'positive', icon: '💰' };
+                return { text: `Anh DƯ khách ${formatMoney(Math.abs(result))}`, class: 'positive', icon: '💰' };
             } else {
                 return { text: 'Hòa vốn', class: 'neutral', icon: '✓' };
             }
@@ -1244,11 +1244,11 @@
                     <div class="summary-value">${formatMoney(totalCreditLimit)}</div>
                 </div>
                 <div class="summary-item">
-                    <div class="summary-label">Hạn mức khả dụng</div>
+                    <div class="summary-label">Tổng đã sử dụng</div>
                     <div class="summary-value">${formatMoney(totalCurrentBalance)}</div>
                 </div>
                 <div class="summary-item">
-                    <div class="summary-label">Dư nợ thẻ</div>
+                    <div class="summary-label">Tổng còn trống</div>
                     <div class="summary-value positive">${formatMoney(totalAvailable)}</div>
                 </div>
                 <div class="summary-item">
@@ -1456,11 +1456,13 @@
                             <strong>${additionalFee > 0 ? '+' : ''}${formatMoney(additionalFee)}</strong>
                         </span>
                     </div>
-                    <div class="money-row">
-                        <span>Tổng phí thực tế:</span>
-                        <span><strong>${formatMoney(totalFee)}</strong></span>
-                    </div>
                     ` : ''}
+                    <div class="money-row" style="background: rgba(124, 179, 66, 0.1); padding: 8px; margin: 0 -12px; padding-left: 12px; padding-right: 12px;">
+                        <span><strong>TỔNG TIỀN PHÍ:</strong></span>
+                        <span style="color: var(--accent-red); font-size: 1.05rem;">
+                            <strong>${formatMoney(totalFee)}</strong>
+                        </span>
+                    </div>
                     <div class="money-row">
                         <span>${resultDisplay.icon} Kết quả sau trừ phí:</span>
                         <span class="info-value ${resultDisplay.class}"><strong>${resultDisplay.text}</strong></span>
