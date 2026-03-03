@@ -1,0 +1,1746 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Love4CreditCard - Quản Lý Đáo Hạn Thẻ Tín Dụng</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <style>
+        :root {
+            --primary-green: #7cb342;
+            --light-green: #aed581;
+            --accent-purple: #9c27b0;
+            --accent-red: #e53935;
+            --accent-orange: #ff9800;
+            --bg-light: #f5f5f5;
+            --bg-white: #ffffff;
+            --text-dark: #212121;
+            --text-secondary: #757575;
+            --border-color: #e0e0e0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: Tahoma, Arial, sans-serif;
+            background: var(--bg-light);
+            color: var(--text-dark);
+            line-height: 1.5;
+            font-size: 13px;
+        }
+
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--shadow);
+        }
+
+        .logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: white;
+            margin-bottom: 3px;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+
+        .logo-subtitle {
+            color: rgba(255,255,255,0.9);
+            font-size: 0.8rem;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 15px;
+        }
+
+        .auth-container {
+            max-width: 350px;
+            margin: 80px auto;
+            background: var(--bg-white);
+            padding: 30px;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+        }
+
+        .auth-title {
+            text-align: center;
+            color: var(--primary-green);
+            margin-bottom: 20px;
+            font-size: 1.3rem;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 8px 10px;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 0.85rem;
+            transition: border-color 0.3s;
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary-green);
+        }
+
+        .form-textarea {
+            resize: vertical;
+            min-height: 60px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 0.8rem;
+            transition: all 0.3s;
+        }
+
+        .btn-primary {
+            background: var(--primary-green);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: #689f38;
+        }
+
+        .btn-secondary {
+            background: var(--accent-purple);
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #7b1fa2;
+        }
+
+        .btn-danger {
+            background: var(--accent-red);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            background: #c62828;
+        }
+
+        .btn-small {
+            padding: 4px 10px;
+            font-size: 0.75rem;
+        }
+
+        .btn-full {
+            width: 100%;
+        }
+
+        .toolbar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .search-box {
+            flex: 1;
+            min-width: 250px;
+        }
+
+        .toolbar-actions {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+
+        .column-selector {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: var(--bg-white);
+            padding: 6px 12px;
+            border-radius: 4px;
+            border: 1px solid var(--border-color);
+        }
+
+        .column-selector label {
+            font-size: 0.8rem;
+            color: var(--text-secondary);
+        }
+
+        .column-selector select {
+            padding: 4px 8px;
+            border: 1px solid var(--border-color);
+            border-radius: 3px;
+            font-size: 0.8rem;
+            font-family: Tahoma, Arial, sans-serif;
+        }
+
+        .tabs {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .tab {
+            padding: 8px 18px;
+            background: none;
+            border: none;
+            cursor: pointer;
+            font-family: Tahoma, Arial, sans-serif;
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+            border-bottom: 3px solid transparent;
+            margin-bottom: -2px;
+            transition: all 0.3s;
+        }
+
+        .tab.active {
+            color: var(--primary-green);
+            border-bottom-color: var(--primary-green);
+        }
+
+        .tab:hover {
+            color: var(--primary-green);
+        }
+
+        .tab-badge {
+            background: var(--accent-red);
+            color: white;
+            padding: 1px 6px;
+            border-radius: 10px;
+            font-size: 0.7rem;
+            margin-left: 4px;
+            font-weight: bold;
+        }
+
+        .customer-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .customer-list.cols-2 { grid-template-columns: repeat(2, 1fr); }
+        .customer-list.cols-3 { grid-template-columns: repeat(3, 1fr); }
+        .customer-list.cols-4 { grid-template-columns: repeat(4, 1fr); }
+        .customer-list.cols-5 { grid-template-columns: repeat(5, 1fr); }
+
+        .customer-item {
+            background: var(--bg-white);
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid var(--primary-green);
+        }
+
+        .customer-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .customer-name {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-dark);
+            margin-bottom: 4px;
+        }
+
+        .customer-phone {
+            color: var(--text-secondary);
+            font-size: 0.75rem;
+            margin-bottom: 6px;
+        }
+
+        .customer-stats {
+            display: flex;
+            gap: 8px;
+            flex-wrap: wrap;
+            margin-bottom: 8px;
+        }
+
+        .stat-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 3px;
+            padding: 2px 6px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            background: var(--bg-light);
+        }
+
+        .stat-badge strong {
+            color: var(--primary-green);
+        }
+
+        .customer-actions {
+            display: flex;
+            gap: 6px;
+            margin-top: 8px;
+        }
+
+        .summary-panel {
+            background: var(--bg-white);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: var(--shadow);
+        }
+
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 12px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--border-color);
+        }
+
+        .summary-title {
+            font-size: 1.1rem;
+            font-weight: bold;
+            color: var(--primary-green);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 10px;
+        }
+
+        .summary-item {
+            background: var(--bg-light);
+            padding: 10px;
+            border-radius: 4px;
+            text-align: center;
+        }
+
+        .summary-label {
+            font-size: 0.7rem;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+        }
+
+        .summary-value {
+            font-size: 1rem;
+            font-weight: bold;
+            color: var(--text-dark);
+        }
+
+        .summary-value.positive {
+            color: var(--primary-green);
+        }
+
+        .summary-value.negative {
+            color: var(--accent-red);
+        }
+
+        .card-list {
+            display: grid;
+            gap: 12px;
+        }
+
+        .card-list-item {
+            background: var(--bg-white);
+            border-radius: 6px;
+            padding: 12px;
+            box-shadow: var(--shadow);
+            cursor: pointer;
+            transition: all 0.3s;
+            border-left: 3px solid var(--primary-green);
+        }
+
+        .card-list-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+        }
+
+        .card-list-item.completed {
+            border-left-color: var(--light-green);
+            opacity: 0.85;
+        }
+
+        .card-list-item.no-contact {
+            border-left-color: var(--accent-orange);
+        }
+
+        .card-list-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 10px;
+        }
+
+        .bank-name {
+            font-size: 1rem;
+            font-weight: bold;
+            margin-bottom: 4px;
+        }
+
+        .card-status-info {
+            display: flex;
+            gap: 8px;
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            flex-wrap: wrap;
+        }
+
+        .status-badge {
+            display: inline-block;
+            padding: 4px 10px;
+            border-radius: 12px;
+            font-size: 0.7rem;
+            font-weight: bold;
+        }
+
+        .status-processing {
+            background: rgba(255, 152, 0, 0.2);
+            color: #e65100;
+        }
+
+        .status-completed {
+            background: rgba(76, 175, 80, 0.2);
+            color: #2e7d32;
+        }
+
+        .status-no-contact {
+            background: rgba(255, 152, 0, 0.2);
+            color: #f57c00;
+        }
+
+        .card-detail {
+            background: var(--bg-white);
+            border-radius: 6px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-detail-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+            padding-bottom: 12px;
+            border-bottom: 2px solid var(--border-color);
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .card-detail-title h2 {
+            margin: 0;
+            color: var(--primary-green);
+            font-size: 1.2rem;
+        }
+
+        .card-detail-title p {
+            margin: 4px 0 0 0;
+            color: var(--text-secondary);
+            font-size: 0.8rem;
+        }
+
+        .card-detail-info {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 12px;
+            margin-bottom: 15px;
+        }
+
+        .info-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .info-label {
+            font-size: 0.75rem;
+            color: var(--text-secondary);
+            margin-bottom: 3px;
+        }
+
+        .info-value {
+            font-weight: bold;
+            color: var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        .info-value.positive {
+            color: var(--primary-green);
+        }
+
+        .info-value.negative {
+            color: var(--accent-red);
+        }
+
+        .info-value.neutral {
+            color: var(--accent-purple);
+        }
+
+        .money-detail {
+            background: var(--bg-light);
+            padding: 12px;
+            border-radius: 6px;
+            margin: 12px 0;
+        }
+
+        .money-row {
+            display: flex;
+            justify-content: space-between;
+            padding: 6px 0;
+            border-bottom: 1px solid var(--border-color);
+            font-size: 0.85rem;
+        }
+
+        .money-row:last-child {
+            border-bottom: none;
+            font-weight: bold;
+            padding-top: 10px;
+            margin-top: 6px;
+            border-top: 2px solid var(--text-dark);
+            font-size: 0.95rem;
+        }
+
+        .back-button {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 15px;
+            background: var(--bg-light);
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            color: var(--text-dark);
+            text-decoration: none;
+            transition: all 0.3s;
+            margin-bottom: 15px;
+            cursor: pointer;
+            font-size: 0.85rem;
+        }
+
+        .back-button:hover {
+            background: var(--border-color);
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .modal.active {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 15px;
+        }
+
+        .modal-content {
+            background: var(--bg-white);
+            border-radius: 6px;
+            padding: 20px;
+            max-width: 550px;
+            width: 100%;
+            max-height: 90vh;
+            overflow-y: auto;
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .modal-title {
+            font-size: 1.2rem;
+            color: var(--primary-green);
+        }
+
+        .close-btn {
+            background: none;
+            border: none;
+            font-size: 1.3rem;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        .copyright {
+            background: var(--bg-white);
+            padding: 15px;
+            margin-top: 20px;
+            border-radius: 6px;
+            box-shadow: var(--shadow);
+            text-align: center;
+            border-top: 3px solid var(--primary-green);
+            font-size: 0.75rem;
+        }
+
+        .copyright-title {
+            color: var(--accent-red);
+            font-weight: bold;
+            margin-bottom: 6px;
+        }
+
+        .copyright-info {
+            margin-bottom: 3px;
+        }
+
+        .copyright-warning {
+            color: var(--accent-red);
+            font-weight: bold;
+            margin-top: 6px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 15px;
+            color: var(--text-secondary);
+            font-size: 0.9rem;
+        }
+
+        .notification {
+            position: fixed;
+            top: 15px;
+            right: 15px;
+            background: var(--primary-green);
+            color: white;
+            padding: 10px 18px;
+            border-radius: 4px;
+            box-shadow: var(--shadow);
+            z-index: 2000;
+            animation: slideIn 0.3s ease;
+            font-size: 0.85rem;
+        }
+
+        @keyframes slideIn {
+            from {
+                transform: translateX(400px);
+                opacity: 0;
+            }
+            to {
+                transform: translateX(0);
+                opacity: 1;
+            }
+        }
+
+        .settings-link {
+            color: white;
+            text-decoration: none;
+            padding: 6px 12px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 4px;
+            transition: background 0.3s;
+            font-size: 0.8rem;
+        }
+
+        .settings-link:hover {
+            background: rgba(255,255,255,0.3);
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+        }
+
+        .reminder-badge {
+            background: var(--accent-red);
+            color: white;
+            padding: 2px 6px;
+            border-radius: 10px;
+            font-size: 0.65rem;
+            margin-left: 6px;
+        }
+
+        @media (max-width: 768px) {
+            .form-row {
+                grid-template-columns: 1fr;
+            }
+            
+            .toolbar {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            
+            .card-detail-info {
+                grid-template-columns: 1fr;
+            }
+
+            .customer-list.cols-2,
+            .customer-list.cols-3,
+            .customer-list.cols-4,
+            .customer-list.cols-5 {
+                grid-template-columns: 1fr;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Màn hình đăng nhập -->
+    <div id="authScreen">
+        <div class="auth-container">
+            <div class="auth-title">🔐 Love4CreditCard</div>
+            <form id="loginForm">
+                <div class="form-group">
+                    <label class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-input" id="loginPassword" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-full">Đăng nhập</button>
+            </form>
+            <div style="margin-top: 15px; text-align: center;">
+                <p style="color: var(--text-secondary); font-size: 0.8rem;">Lần đầu sử dụng? Nhập mật khẩu để tạo tài khoản mới</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Màn hình chính -->
+    <div id="mainScreen" style="display: none;">
+        <div class="header-banner">
+            <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; flex-wrap: wrap;">
+                <div>
+                    <div class="logo">💳 Love4CreditCard</div>
+                    <div class="logo-subtitle">Hệ Thống Quản Lý Đáo Hạn Thẻ Tín Dụng Chuyên Nghiệp</div>
+                </div>
+                <div>
+                    <a href="#" class="settings-link" onclick="showSettings(); return false;">⚙️ Cài đặt</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="container">
+            <!-- Trang 1: Danh sách khách hàng -->
+            <div id="customerListPage" class="page active">
+                <div class="toolbar">
+                    <div class="search-box">
+                        <input type="text" class="form-input" id="searchCustomer" placeholder="🔍 Tìm theo tên hoặc SĐT...">
+                    </div>
+                    <div class="toolbar-actions">
+                        <div class="column-selector">
+                            <label>Hiển thị:</label>
+                            <select id="columnSelect" onchange="changeColumnLayout()">
+                                <option value="2">2 cột</option>
+                                <option value="3" selected>3 cột</option>
+                                <option value="4">4 cột</option>
+                                <option value="5">5 cột</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary" onclick="showAddCustomerModal()">➕ Thêm KH</button>
+                        <button class="btn btn-secondary" onclick="exportToExcel()">📊 Xuất Excel</button>
+                    </div>
+                </div>
+
+                <div class="tabs">
+                    <button class="tab active" onclick="switchTab('processing', event)">
+                        Chưa hoàn thành
+                        <span class="tab-badge" id="processingCount">0</span>
+                    </button>
+                    <button class="tab" onclick="switchTab('completed', event)">
+                        Đã hoàn thành
+                        <span class="tab-badge" id="completedCount" style="background: var(--primary-green);">0</span>
+                    </button>
+                    <button class="tab" onclick="switchTab('no-contact', event)">
+                        Không liên hệ
+                        <span class="tab-badge" id="noContactCount" style="background: var(--accent-orange);">0</span>
+                    </button>
+                </div>
+
+                <div id="customersContainer" class="customer-list cols-3"></div>
+            </div>
+
+            <!-- Trang 2: Danh sách thẻ -->
+            <div id="cardListPage" class="page">
+                <button class="back-button" onclick="showCustomerList()">
+                    ← Quay lại danh sách khách hàng
+                </button>
+
+                <div class="summary-panel">
+                    <div class="summary-header">
+                        <div>
+                            <h2 id="cardListCustomerName" class="summary-title"></h2>
+                            <p id="cardListCustomerPhone" style="color: var(--text-secondary); font-size: 0.8rem; margin: 3px 0 0 0;"></p>
+                        </div>
+                    </div>
+                    <div class="summary-grid" id="customerSummary"></div>
+                </div>
+
+                <div style="margin-bottom: 15px;">
+                    <button class="btn btn-primary" onclick="showAddCardModalForCurrentCustomer()">➕ Thêm Thẻ Mới</button>
+                </div>
+
+                <div id="cardListContainer" class="card-list"></div>
+            </div>
+
+            <!-- Trang 3: Chi tiết thẻ -->
+            <div id="cardDetailPage" class="page">
+                <button class="back-button" onclick="backToCardList()">
+                    ← Quay lại danh sách thẻ
+                </button>
+
+                <div id="cardDetailContainer" class="card-detail"></div>
+            </div>
+        </div>
+
+        <div class="copyright">
+            <div class="copyright-title">BẢN QUYỀN THUỘC VỀ</div>
+            <div class="copyright-info">Phạm Quang Trung</div>
+            <div class="copyright-info">📞 0364.330.398 | Zalo: 055.979.5583</div>
+            <div class="copyright-warning">PHIÊN BẢN PRO – NGHIÊM CẤM SAO CHÉP, CHIA SẺ DƯỚI MỌI HÌNH THỨC KHI CHƯA CÓ SỰ ĐỒNG Ý CỦA CHỦ SỞ HỮU</div>
+        </div>
+    </div>
+
+    <!-- Modal Thêm/Sửa Khách Hàng -->
+    <div id="customerModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="customerModalTitle">Thêm Khách Hàng</h2>
+                <button class="close-btn" onclick="closeCustomerModal()">×</button>
+            </div>
+            <form id="customerForm">
+                <input type="hidden" id="customerId">
+                
+                <div class="form-group">
+                    <label class="form-label">Tên khách hàng *</label>
+                    <input type="text" class="form-input" id="customerNameInput" required>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Số điện thoại *</label>
+                    <input type="tel" class="form-input" id="customerPhone" required placeholder="VD: 0901234567">
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeCustomerModal()" style="flex: 1;">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Thêm/Sửa Thẻ -->
+    <div id="cardModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title" id="cardModalTitle">Thêm Thẻ Tín Dụng</h2>
+                <button class="close-btn" onclick="closeCardModal()">×</button>
+            </div>
+            <form id="cardForm">
+                <input type="hidden" id="cardCustomerId">
+                <input type="hidden" id="cardId">
+                
+                <div class="form-group">
+                    <label class="form-label">Ngân hàng *</label>
+                    <select class="form-select" id="bankSelect" required></select>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Hạn mức thẻ (VNĐ) *</label>
+                        <input type="number" class="form-input" id="creditLimit" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số dư hiện tại (VNĐ) *</label>
+                        <input type="number" class="form-input" id="currentBalance" required min="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Ngày sao kê (hàng tháng) *</label>
+                        <select class="form-select" id="statementDay" required>
+                            <option value="">Chọn ngày</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Ngày thanh toán (hàng tháng) *</label>
+                        <select class="form-select" id="paymentDay" required>
+                            <option value="">Chọn ngày</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Số tiền nạp vào (VNĐ) *</label>
+                        <input type="number" class="form-input" id="depositAmount" required min="0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Số tiền rút ra (VNĐ) *</label>
+                        <input type="number" class="form-input" id="withdrawAmount" required min="0">
+                    </div>
+                </div>
+
+                <div class="form-row">
+                    <div class="form-group">
+                        <label class="form-label">Phí đáo hạn (%) *</label>
+                        <input type="number" class="form-input" id="feePercent" required min="0" max="100" step="0.1" placeholder="VD: 2.0">
+                    </div>
+                    <div class="form-group">
+                        <label class="form-label">Tính phí trên *</label>
+                        <select class="form-select" id="feeCalculation" required>
+                            <option value="withdraw">Số tiền RÚT</option>
+                            <option value="deposit">Số tiền NẠP</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Phụ thu phí (VNĐ)</label>
+                    <input type="number" class="form-input" id="additionalFee" min="0" placeholder="Nhập số dương để thu thêm, số âm để giảm trừ (VD: 100000 hoặc -50000)">
+                    <small style="color: var(--text-secondary); font-size: 0.7rem; display: block; margin-top: 3px;">
+                        Số dương (+): Thu thêm | Số âm (-): Giảm trừ | Để trống: Không phụ thu
+                    </small>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Trạng thái *</label>
+                    <select class="form-select" id="cardStatus" required>
+                        <option value="processing">Chưa hoàn thành</option>
+                        <option value="completed">Đã hoàn thành</option>
+                        <option value="no-contact">Không liên hệ</option>
+                    </select>
+                </div>
+
+                <div class="form-group">
+                    <label class="form-label">Ghi chú</label>
+                    <textarea class="form-textarea" id="notes"></textarea>
+                </div>
+
+                <div style="display: flex; gap: 8px;">
+                    <button type="submit" class="btn btn-primary" style="flex: 1;">Lưu</button>
+                    <button type="button" class="btn btn-secondary" onclick="closeCardModal()" style="flex: 1;">Hủy</button>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <!-- Modal Cài đặt -->
+    <div id="settingsModal" class="modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Cài đặt</h2>
+                <button class="close-btn" onclick="closeSettings()">×</button>
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Đổi mật khẩu</label>
+                <input type="password" class="form-input" id="newPassword" placeholder="Nhập mật khẩu mới">
+            </div>
+            
+            <div class="form-group">
+                <label class="form-label">Xác nhận mật khẩu</label>
+                <input type="password" class="form-input" id="confirmPassword" placeholder="Nhập lại mật khẩu">
+            </div>
+            
+            <button class="btn btn-primary btn-full" onclick="changePassword()">Đổi mật khẩu</button>
+            
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                <button class="btn btn-danger btn-full" onclick="logout()">Đăng xuất</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const BANKS = [
+            { id: 'vcb', name: 'VCB (Vietcombank)' },
+            { id: 'tcb', name: 'TCB (Techcombank)' },
+            { id: 'bidv', name: 'BIDV' },
+            { id: 'vib', name: 'VIB' },
+            { id: 'acb', name: 'ACB' },
+            { id: 'mb', name: 'MB (MB Bank)' },
+            { id: 'vpb', name: 'VPB (VPBank)' },
+            { id: 'stb', name: 'STB (Sacombank)' },
+            { id: 'tpb', name: 'TPB (TPBank)' },
+            { id: 'shb', name: 'SHB' },
+            { id: 'ctg', name: 'CTG (VietinBank)' },
+            { id: 'msb', name: 'MSB' },
+            { id: 'scb', name: 'SCB' },
+            { id: 'hdb', name: 'HDB (HDBank)' },
+            { id: 'ocb', name: 'OCB' },
+            { id: 'seabank', name: 'SeABank' },
+            { id: 'abbank', name: 'ABBank' },
+            { id: 'vab', name: 'VAB (VietABank)' },
+            { id: 'ncb', name: 'NCB' },
+            { id: 'bvb', name: 'BVB (BaoViet Bank)' },
+            { id: 'agribank', name: 'Agribank' },
+            { id: 'eximbank', name: 'EIB (Eximbank)' },
+            { id: 'lpb', name: 'LPB (LienVietPost)' },
+            { id: 'pvcombank', name: 'PVcomBank' },
+            { id: 'vietbank', name: 'VietBank' },
+            { id: 'oceanbank', name: 'OceanBank' },
+            { id: 'gpbank', name: 'GPBank' },
+            { id: 'pgbank', name: 'PGBank' },
+            { id: 'kienlongbank', name: 'KLB (Kiên Long Bank)' },
+            { id: 'dongabank', name: 'DongA Bank' },
+            { id: 'namabank', name: 'Nam A Bank' },
+            { id: 'bacabank', name: 'Bac A Bank' },
+            { id: 'wooribank', name: 'Woori Bank VN' },
+            { id: 'shinhanbank', name: 'Shinhan Bank VN' },
+            { id: 'publicbank', name: 'Public Bank VN' },
+            { id: 'hongleongbank', name: 'Hong Leong Bank' },
+            { id: 'indovinabank', name: 'Indovina Bank' },
+            { id: 'cbbank', name: 'CB Bank' },
+            { id: 'coopbank', name: 'Co-op Bank' },
+            // Công ty tài chính
+            { id: 'fecredit', name: 'FE Credit' },
+            { id: 'homecredit', name: 'Home Credit VN' },
+            { id: 'mcredit', name: 'MCredit' },
+            { id: 'hdfinance', name: 'HD Saison' },
+            { id: 'jaccs', name: 'JACCS' },
+            { id: 'easycredit', name: 'Easy Credit' },
+            { id: 'vfinance', name: 'VFinance' },
+            { id: 'shbfinance', name: 'SHB Finance' },
+            { id: 'pvfinance', name: 'PV Finance (PVFC)' },
+            { id: 'mirae', name: 'Mirae Asset' },
+            { id: 'ufinance', name: 'UOB Finance' },
+            { id: 'vietcredit', name: 'Viet Credit' },
+            { id: 'tpbfinance', name: 'TPB Finance' },
+            { id: 'kredivo', name: 'Kredivo' },
+            { id: 'atome', name: 'Atome' },
+            { id: 'momo', name: 'MoMo (Ví MoMo)' },
+            { id: 'zalopay', name: 'ZaloPay' },
+            { id: 'vnpay', name: 'VNPAY' },
+            { id: 'viettelmoney', name: 'Viettel Money' },
+            { id: 'mobifone', name: 'MobiFone Money' },
+            { id: 'vietfinance', name: 'Viet Finance' },
+            { id: 'prudential', name: 'Prudential Finance' },
+            { id: 'pvcfc', name: 'PVCFC' },
+            { id: 'fundiin', name: 'Fundiin' },
+            { id: 'timo', name: 'Timo Digital Bank' },
+            { id: 'cake', name: 'CAKE by VPBank' }
+        ];
+
+        let currentUser = null;
+        let customers = [];
+        let currentTab = 'processing';
+        let editingCustomerId = null;
+        let editingCardId = null;
+        let viewingCustomerId = null;
+        let viewingCardId = null;
+        let columnLayout = 3;
+
+        function init() {
+            loadBankOptions();
+            loadDayOptions();
+            checkAuth();
+            setupEventListeners();
+            loadColumnLayout();
+        }
+
+        function loadBankOptions() {
+            const select = document.getElementById('bankSelect');
+            BANKS.forEach(b => select.add(new Option(b.name, b.id)));
+        }
+
+        function loadDayOptions() {
+            const s = document.getElementById('statementDay');
+            const p = document.getElementById('paymentDay');
+            for (let i = 1; i <= 31; i++) {
+                s.add(new Option(`Ngày ${i}`, i));
+                p.add(new Option(`Ngày ${i}`, i));
+            }
+        }
+
+        function loadColumnLayout() {
+            const saved = localStorage.getItem('l4cc_column_layout');
+            if (saved) {
+                columnLayout = parseInt(saved);
+                document.getElementById('columnSelect').value = columnLayout;
+            }
+        }
+
+        function changeColumnLayout() {
+            columnLayout = parseInt(document.getElementById('columnSelect').value);
+            localStorage.setItem('l4cc_column_layout', columnLayout);
+            const container = document.getElementById('customersContainer');
+            container.className = `customer-list cols-${columnLayout}`;
+        }
+
+        function checkAuth() {
+            currentUser = localStorage.getItem('l4cc_user');
+            if (currentUser) {
+                loadUserData();
+                showMainScreen();
+            } else {
+                showAuthScreen();
+            }
+        }
+
+        function showAuthScreen() {
+            document.getElementById('authScreen').style.display = 'block';
+            document.getElementById('mainScreen').style.display = 'none';
+        }
+
+        function showMainScreen() {
+            document.getElementById('authScreen').style.display = 'none';
+            document.getElementById('mainScreen').style.display = 'block';
+            renderCustomerList();
+        }
+
+        document.getElementById('loginForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const password = document.getElementById('loginPassword').value;
+            if (!password) {
+                showNotification('Vui lòng nhập mật khẩu', 'error');
+                return;
+            }
+            const userHash = btoa(password);
+            const existingData = localStorage.getItem(`l4cc_data_${userHash}`);
+            if (existingData) {
+                currentUser = userHash;
+                localStorage.setItem('l4cc_user', userHash);
+                loadUserData();
+                showMainScreen();
+                showNotification('Đăng nhập thành công!');
+            } else {
+                currentUser = userHash;
+                localStorage.setItem('l4cc_user', userHash);
+                customers = [];
+                saveUserData();
+                showMainScreen();
+                showNotification('Tạo tài khoản thành công!');
+            }
+        });
+
+        function loadUserData() {
+            const data = localStorage.getItem(`l4cc_data_${currentUser}`);
+            customers = data ? JSON.parse(data) : [];
+        }
+
+        function saveUserData() {
+            localStorage.setItem(`l4cc_data_${currentUser}`, JSON.stringify(customers));
+        }
+
+        function formatMoney(amount) {
+            return new Intl.NumberFormat('vi-VN').format(amount) + '₫';
+        }
+
+        function calculateFee(feePercent, feeCalculation, depositAmount, withdrawAmount, additionalFee = 0) {
+            const baseAmount = feeCalculation === 'withdraw' ? withdrawAmount : depositAmount;
+            const baseFee = Math.round(baseAmount * feePercent / 100);
+            return baseFee + (additionalFee || 0);
+        }
+
+        function calculateFinalResult(deposit, withdraw, fee) {
+            return withdraw - deposit - fee;
+        }
+
+        function formatResult(result) {
+            if (result > 0) {
+                return { text: `Nợ của khách ${formatMoney(result)}`, class: 'negative', icon: '⚠️' };
+            } else if (result < 0) {
+                return { text: `Khách Trả Phí ${formatMoney(Math.abs(result))}`, class: 'positive', icon: '💰' };
+            } else {
+                return { text: 'Hòa vốn', class: 'neutral', icon: '✓' };
+            }
+        }
+
+        function getBankInfo(bankId) {
+            return BANKS.find(b => b.id === bankId) || { name: 'Unknown' };
+        }
+
+        function getDaysUntilPayment(paymentDay) {
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
+            const currentMonth = today.getMonth();
+            const currentYear = today.getFullYear();
+            let paymentDate = new Date(currentYear, currentMonth, paymentDay);
+            if (today.getDate() > paymentDay) {
+                paymentDate.setMonth(paymentDate.getMonth() + 1);
+            }
+            paymentDate.setHours(0, 0, 0, 0);
+            return Math.ceil((paymentDate - today) / (1000 * 60 * 60 * 24));
+        }
+
+        function shouldRemind(card) {
+            return card.status === 'processing' && getDaysUntilPayment(card.paymentDay) <= 5;
+        }
+
+        function showPage(pageId) {
+            document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+            document.getElementById(pageId).classList.add('active');
+        }
+
+        function showCustomerList() {
+            showPage('customerListPage');
+            renderCustomerList();
+        }
+
+        function showCardListForCustomer(customerId) {
+            viewingCustomerId = customerId;
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            document.getElementById('cardListCustomerName').textContent = '👤 ' + customer.name;
+            document.getElementById('cardListCustomerPhone').textContent = '📞 ' + customer.phone;
+            showPage('cardListPage');
+            renderCustomerSummary(customer);
+            renderCardList(customerId);
+        }
+
+        function renderCustomerSummary(customer) {
+            const container = document.getElementById('customerSummary');
+            if (!customer.cards || customer.cards.length === 0) {
+                container.innerHTML = '<div style="text-align: center; color: var(--text-secondary); padding: 10px;">Chưa có thẻ nào</div>';
+                return;
+            }
+
+            let totalCreditLimit = 0;
+            let totalCurrentBalance = 0;
+            let totalDeposit = 0;
+            let totalWithdraw = 0;
+            let totalFee = 0;
+
+            customer.cards.forEach(card => {
+                totalCreditLimit += card.creditLimit;
+                totalCurrentBalance += card.currentBalance;
+                totalDeposit += card.depositAmount;
+                totalWithdraw += card.withdrawAmount;
+                totalFee += calculateFee(card.feePercent, card.feeCalculation, card.depositAmount, card.withdrawAmount, card.additionalFee);
+            });
+
+            const totalAvailable = totalCreditLimit - totalCurrentBalance;
+            const finalResult = calculateFinalResult(totalDeposit, totalWithdraw, totalFee);
+            const resultDisplay = formatResult(finalResult);
+
+            container.innerHTML = `
+                <div class="summary-item">
+                    <div class="summary-label">Tổng hạn mức</div>
+                    <div class="summary-value">${formatMoney(totalCreditLimit)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Hạn mức khả dụng</div>
+                    <div class="summary-value">${formatMoney(totalCurrentBalance)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Dư nợ thẻ</div>
+                    <div class="summary-value positive">${formatMoney(totalAvailable)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Tổng nạp</div>
+                    <div class="summary-value">${formatMoney(totalDeposit)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Tổng rút</div>
+                    <div class="summary-value">${formatMoney(totalWithdraw)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Tổng phí</div>
+                    <div class="summary-value">${formatMoney(totalFee)}</div>
+                </div>
+                <div class="summary-item">
+                    <div class="summary-label">Kết quả</div>
+                    <div class="summary-value ${resultDisplay.class}">${resultDisplay.icon}</div>
+                </div>
+                <div class="summary-item" style="grid-column: span 2;">
+                    <div class="summary-label">Tổng kết</div>
+                    <div class="summary-value ${resultDisplay.class}">${resultDisplay.text}</div>
+                </div>
+            `;
+        }
+
+        function showCardDetail(customerId, cardId) {
+            viewingCustomerId = customerId;
+            viewingCardId = cardId;
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            const card = customer.cards.find(c => c.id === cardId);
+            if (!card) return;
+            showPage('cardDetailPage');
+            renderCardDetail(customer, card);
+        }
+
+        function backToCardList() {
+            showCardListForCustomer(viewingCustomerId);
+        }
+
+        function renderCustomerList() {
+            const container = document.getElementById('customersContainer');
+            container.className = `customer-list cols-${columnLayout}`;
+            const searchText = document.getElementById('searchCustomer').value.toLowerCase();
+            
+            let filteredCustomers = customers.filter(customer => {
+                const matchSearch = !searchText || 
+                    customer.name.toLowerCase().includes(searchText) || 
+                    customer.phone.includes(searchText);
+                if (!matchSearch) return false;
+                if (!customer.cards || customer.cards.length === 0) return true;
+                return customer.cards.some(card => card.status === currentTab);
+            });
+
+            const processingCount = customers.reduce((count, c) => 
+                count + (c.cards ? c.cards.filter(card => card.status === 'processing').length : 0), 0);
+            const completedCount = customers.reduce((count, c) => 
+                count + (c.cards ? c.cards.filter(card => card.status === 'completed').length : 0), 0);
+            const noContactCount = customers.reduce((count, c) => 
+                count + (c.cards ? c.cards.filter(card => card.status === 'no-contact').length : 0), 0);
+
+            document.getElementById('processingCount').textContent = processingCount;
+            document.getElementById('completedCount').textContent = completedCount;
+            document.getElementById('noContactCount').textContent = noContactCount;
+
+            if (filteredCustomers.length === 0) {
+                container.innerHTML = '<div class="empty-state">Không có khách hàng nào</div>';
+                return;
+            }
+
+            container.innerHTML = filteredCustomers.map(customer => {
+                const cardsWithStatus = customer.cards ? customer.cards.filter(c => c.status === currentTab) : [];
+                const totalCards = customer.cards ? customer.cards.length : 0;
+                const upcomingCards = cardsWithStatus.filter(c => shouldRemind(c)).length;
+                return `
+                    <div class="customer-item" onclick="showCardListForCustomer('${customer.id}')">
+                        <div class="customer-name">👤 ${customer.name}</div>
+                        <div class="customer-phone">📞 ${customer.phone}</div>
+                        <div class="customer-stats">
+                            <span class="stat-badge">💳 <strong>${totalCards}</strong> thẻ</span>
+                            ${upcomingCards > 0 ? `<span class="stat-badge" style="background: rgba(229, 57, 53, 0.1); color: var(--accent-red);">🔔 <strong>${upcomingCards}</strong> nhắc</span>` : ''}
+                        </div>
+                        <div class="customer-actions" onclick="event.stopPropagation();">
+                            <button class="btn btn-secondary btn-small" onclick="editCustomer('${customer.id}')">✏️</button>
+                            <button class="btn btn-danger btn-small" onclick="deleteCustomer('${customer.id}')">🗑️</button>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderCardList(customerId) {
+            const container = document.getElementById('cardListContainer');
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer || !customer.cards || customer.cards.length === 0) {
+                container.innerHTML = '<div class="empty-state">Chưa có thẻ nào. Nhấn "Thêm Thẻ Mới" để bắt đầu!</div>';
+                return;
+            }
+
+            container.innerHTML = customer.cards.map(card => {
+                const bank = getBankInfo(card.bankId);
+                const daysRemaining = getDaysUntilPayment(card.paymentDay);
+                const isReminder = shouldRemind(card);
+                let statusClass = card.status === 'completed' ? 'status-completed' : 
+                                 card.status === 'no-contact' ? 'status-no-contact' : 'status-processing';
+                let statusText = card.status === 'completed' ? '✅ Hoàn thành' : 
+                                card.status === 'no-contact' ? '📵 Không liên hệ' : '⏳ Chưa xong';
+
+                return `
+                    <div class="card-list-item ${card.status}" onclick="showCardDetail('${customerId}', '${card.id}')">
+                        <div class="card-list-header">
+                            <div>
+                                <div class="bank-name">${bank.name}</div>
+                                <div class="card-status-info">
+                                    <span>Ngày ${card.paymentDay} hàng tháng</span>
+                                    <span>•</span>
+                                    <span style="color: ${daysRemaining <= 3 ? 'var(--accent-red)' : 'inherit'};">Còn ${daysRemaining} ngày</span>
+                                    ${isReminder ? '<span class="reminder-badge">🔔</span>' : ''}
+                                </div>
+                            </div>
+                            <div style="display: flex; align-items: center; gap: 6px;" onclick="event.stopPropagation();">
+                                <span class="status-badge ${statusClass}">${statusText}</span>
+                                <button class="btn btn-secondary btn-small" onclick="editCard('${customerId}', '${card.id}')">✏️</button>
+                                <button class="btn btn-danger btn-small" onclick="deleteCard('${customerId}', '${card.id}')">🗑️</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        function renderCardDetail(customer, card) {
+            const container = document.getElementById('cardDetailContainer');
+            const bank = getBankInfo(card.bankId);
+            const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+            const additionalFee = card.additionalFee || 0;
+            const totalFee = baseFee + additionalFee;
+            const finalResult = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
+            const resultDisplay = formatResult(finalResult);
+            const daysRemaining = getDaysUntilPayment(card.paymentDay);
+            const availableBalance = card.creditLimit - card.currentBalance;
+
+            let statusClass = card.status === 'completed' ? 'status-completed' : 
+                             card.status === 'no-contact' ? 'status-no-contact' : 'status-processing';
+            let statusText = card.status === 'completed' ? '✅ Hoàn thành' : 
+                            card.status === 'no-contact' ? '📵 Không liên hệ' : '⏳ Chưa hoàn thành';
+
+            container.innerHTML = `
+                <div class="card-detail-header">
+                    <div class="card-detail-title">
+                        <h2>${bank.name}</h2>
+                        <p>Khách hàng: ${customer.name} (${customer.phone})</p>
+                    </div>
+                    <div style="display: flex; gap: 6px; flex-wrap: wrap;">
+                        <span class="status-badge ${statusClass}">${statusText}</span>
+                        <button class="btn btn-secondary btn-small" onclick="editCard('${customer.id}', '${card.id}')">✏️ Sửa</button>
+                        <button class="btn btn-danger btn-small" onclick="deleteCard('${customer.id}', '${card.id}')">🗑️ Xóa</button>
+                    </div>
+                </div>
+
+                <div class="card-detail-info">
+                    <div class="info-item">
+                        <span class="info-label">Hạn mức thẻ</span>
+                        <span class="info-value">${formatMoney(card.creditLimit)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Số dư hiện tại</span>
+                        <span class="info-value">${formatMoney(card.currentBalance)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Còn trống</span>
+                        <span class="info-value positive">${formatMoney(availableBalance)}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ngày sao kê</span>
+                        <span class="info-value">Ngày ${card.statementDay}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Ngày thanh toán</span>
+                        <span class="info-value">Ngày ${card.paymentDay}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="info-label">Còn đến hạn</span>
+                        <span class="info-value ${daysRemaining <= 3 ? 'negative' : 'positive'}">${daysRemaining} ngày</span>
+                    </div>
+                </div>
+
+                <div class="money-detail">
+                    <div class="money-row">
+                        <span>Số tiền nạp vào:</span>
+                        <span><strong>${formatMoney(card.depositAmount)}</strong></span>
+                    </div>
+                    <div class="money-row">
+                        <span>Số tiền rút ra:</span>
+                        <span><strong>${formatMoney(card.withdrawAmount)}</strong></span>
+                    </div>
+                    <div class="money-row">
+                        <span>Phí cơ bản (${card.feePercent}% trên ${card.feeCalculation === 'withdraw' ? 'rút' : 'nạp'}):</span>
+                        <span><strong>${formatMoney(baseFee)}</strong></span>
+                    </div>
+                    ${additionalFee !== 0 ? `
+                    <div class="money-row">
+                        <span>Phụ thu phí (${additionalFee > 0 ? 'Thu thêm' : 'Giảm trừ'}):</span>
+                        <span style="color: ${additionalFee > 0 ? 'var(--accent-red)' : 'var(--primary-green)'};">
+                            <strong>${additionalFee > 0 ? '+' : ''}${formatMoney(additionalFee)}</strong>
+                        </span>
+                    </div>
+                    <div class="money-row">
+                        <span>Tổng phí thực tế:</span>
+                        <span><strong>${formatMoney(totalFee)}</strong></span>
+                    </div>
+                    ` : ''}
+                    <div class="money-row">
+                        <span>${resultDisplay.icon} Kết quả sau trừ phí:</span>
+                        <span class="info-value ${resultDisplay.class}"><strong>${resultDisplay.text}</strong></span>
+                    </div>
+                </div>
+
+                ${card.notes ? `<div style="background: var(--bg-light); padding: 10px; border-radius: 4px; margin-top: 12px;">
+                    <strong style="color: var(--text-secondary); font-size: 0.8rem;">📝 Ghi chú:</strong>
+                    <p style="margin: 5px 0 0 0; font-size: 0.85rem;">${card.notes}</p>
+                </div>` : ''}
+            `;
+        }
+
+        function switchTab(tab, event) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            event.target.classList.add('active');
+            renderCustomerList();
+        }
+
+        function showAddCustomerModal() {
+            editingCustomerId = null;
+            document.getElementById('customerModalTitle').textContent = 'Thêm Khách Hàng';
+            document.getElementById('customerForm').reset();
+            document.getElementById('customerId').value = '';
+            document.getElementById('customerModal').classList.add('active');
+        }
+
+        function closeCustomerModal() {
+            document.getElementById('customerModal').classList.remove('active');
+            editingCustomerId = null;
+        }
+
+        function editCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            editingCustomerId = id;
+            document.getElementById('customerModalTitle').textContent = 'Chỉnh Sửa Khách Hàng';
+            document.getElementById('customerId').value = id;
+            document.getElementById('customerNameInput').value = customer.name;
+            document.getElementById('customerPhone').value = customer.phone;
+            document.getElementById('customerModal').classList.add('active');
+        }
+
+        function deleteCustomer(id) {
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            if (!confirm(`Bạn có chắc muốn xóa khách hàng "${customer.name}" và tất cả ${customer.cards ? customer.cards.length : 0} thẻ?`)) return;
+            customers = customers.filter(c => c.id !== id);
+            saveUserData();
+            renderCustomerList();
+            showNotification('Đã xóa khách hàng!');
+        }
+
+        document.getElementById('customerForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const customerData = {
+                id: editingCustomerId || Date.now().toString(),
+                name: document.getElementById('customerNameInput').value,
+                phone: document.getElementById('customerPhone').value,
+                cards: editingCustomerId ? customers.find(c => c.id === editingCustomerId).cards : [],
+                createdAt: editingCustomerId ? customers.find(c => c.id === editingCustomerId).createdAt : new Date().toISOString()
+            };
+            if (editingCustomerId) {
+                const index = customers.findIndex(c => c.id === editingCustomerId);
+                customers[index] = customerData;
+                showNotification('Đã cập nhật!');
+            } else {
+                customers.push(customerData);
+                showNotification('Đã thêm khách hàng!');
+            }
+            saveUserData();
+            closeCustomerModal();
+            renderCustomerList();
+        });
+
+        function showAddCardModalForCurrentCustomer() {
+            editingCardId = null;
+            document.getElementById('cardModalTitle').textContent = 'Thêm Thẻ Tín Dụng';
+            document.getElementById('cardForm').reset();
+            document.getElementById('cardCustomerId').value = viewingCustomerId;
+            document.getElementById('cardId').value = '';
+            document.getElementById('cardModal').classList.add('active');
+        }
+
+        function closeCardModal() {
+            document.getElementById('cardModal').classList.remove('active');
+            editingCardId = null;
+        }
+
+        function editCard(customerId, cardId) {
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            const card = customer.cards.find(c => c.id === cardId);
+            if (!card) return;
+            editingCardId = cardId;
+            document.getElementById('cardModalTitle').textContent = 'Chỉnh Sửa Thẻ';
+            document.getElementById('cardCustomerId').value = customerId;
+            document.getElementById('cardId').value = cardId;
+            document.getElementById('bankSelect').value = card.bankId;
+            document.getElementById('creditLimit').value = card.creditLimit;
+            document.getElementById('currentBalance').value = card.currentBalance;
+            document.getElementById('statementDay').value = card.statementDay;
+            document.getElementById('paymentDay').value = card.paymentDay;
+            document.getElementById('depositAmount').value = card.depositAmount;
+            document.getElementById('withdrawAmount').value = card.withdrawAmount;
+            document.getElementById('feePercent').value = card.feePercent;
+            document.getElementById('feeCalculation').value = card.feeCalculation;
+            document.getElementById('additionalFee').value = card.additionalFee || '';
+            document.getElementById('cardStatus').value = card.status;
+            document.getElementById('notes').value = card.notes || '';
+            document.getElementById('cardModal').classList.add('active');
+        }
+
+        function deleteCard(customerId, cardId) {
+            if (!confirm('Bạn có chắc muốn xóa thẻ này?')) return;
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            customer.cards = customer.cards.filter(c => c.id !== cardId);
+            saveUserData();
+            if (document.getElementById('cardDetailPage').classList.contains('active')) {
+                showCardListForCustomer(customerId);
+            } else {
+                renderCardList(customerId);
+                renderCustomerSummary(customer);
+            }
+            showNotification('Đã xóa thẻ!');
+        }
+
+        document.getElementById('cardForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const customerId = document.getElementById('cardCustomerId').value;
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            const additionalFeeValue = document.getElementById('additionalFee').value;
+            const cardData = {
+                id: editingCardId || Date.now().toString(),
+                bankId: document.getElementById('bankSelect').value,
+                creditLimit: parseInt(document.getElementById('creditLimit').value),
+                currentBalance: parseInt(document.getElementById('currentBalance').value),
+                statementDay: parseInt(document.getElementById('statementDay').value),
+                paymentDay: parseInt(document.getElementById('paymentDay').value),
+                depositAmount: parseInt(document.getElementById('depositAmount').value),
+                withdrawAmount: parseInt(document.getElementById('withdrawAmount').value),
+                feePercent: parseFloat(document.getElementById('feePercent').value),
+                feeCalculation: document.getElementById('feeCalculation').value,
+                additionalFee: additionalFeeValue ? parseInt(additionalFeeValue) : 0,
+                status: document.getElementById('cardStatus').value,
+                notes: document.getElementById('notes').value,
+                createdAt: editingCardId ? customer.cards.find(c => c.id === editingCardId).createdAt : new Date().toISOString()
+            };
+            if (!customer.cards) customer.cards = [];
+            if (editingCardId) {
+                const index = customer.cards.findIndex(c => c.id === editingCardId);
+                customer.cards[index] = cardData;
+                showNotification('Đã cập nhật thẻ!');
+            } else {
+                customer.cards.push(cardData);
+                showNotification('Đã thêm thẻ!');
+            }
+            saveUserData();
+            closeCardModal();
+            if (document.getElementById('cardListPage').classList.contains('active')) {
+                renderCardList(customerId);
+                renderCustomerSummary(customer);
+            } else if (document.getElementById('cardDetailPage').classList.contains('active')) {
+                renderCardDetail(customer, cardData);
+            }
+        });
+
+        function exportToExcel() {
+            if (customers.length === 0) {
+                showNotification('Không có dữ liệu!', 'error');
+                return;
+            }
+            const exportData = [];
+            customers.forEach(customer => {
+                if (!customer.cards) return;
+                customer.cards.forEach(card => {
+                    const bank = getBankInfo(card.bankId);
+                    const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                    const additionalFee = card.additionalFee || 0;
+                    const totalFee = baseFee + additionalFee;
+                    const finalResult = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
+                    const resultDisplay = formatResult(finalResult);
+                    const availableBalance = card.creditLimit - card.currentBalance;
+                    let statusText = card.status === 'completed' ? 'Hoàn thành' : 
+                                    card.status === 'no-contact' ? 'Không liên hệ' : 'Chưa hoàn thành';
+                    exportData.push({
+                        'Tên KH': customer.name,
+                        'SĐT': customer.phone,
+                        'Ngân hàng': bank.name,
+                        'Hạn mức': card.creditLimit,
+                        'Số dư': card.currentBalance,
+                        'Còn trống': availableBalance,
+                        'Ngày SK': `Ngày ${card.statementDay}`,
+                        'Ngày TT': `Ngày ${card.paymentDay}`,
+                        'Tiền nạp': card.depositAmount,
+                        'Tiền rút': card.withdrawAmount,
+                        'Phí %': card.feePercent,
+                        'Tính trên': card.feeCalculation === 'withdraw' ? 'Rút' : 'Nạp',
+                        'Phí cơ bản': baseFee,
+                        'Phụ thu': additionalFee,
+                        'Tổng phí': totalFee,
+                        'Kết quả': resultDisplay.text,
+                        'Trạng thái': statusText,
+                        'Ghi chú': card.notes || ''
+                    });
+                });
+            });
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            ws['!cols'] = [
+                { wch: 18 }, { wch: 13 }, { wch: 18 }, { wch: 15 },
+                { wch: 15 }, { wch: 15 }, { wch: 12 }, { wch: 12 },
+                { wch: 15 }, { wch: 15 }, { wch: 8 }, { wch: 12 },
+                { wch: 15 }, { wch: 12 }, { wch: 15 }, { wch: 22 }, { wch: 13 }, { wch: 25 }
+            ];
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Danh sách');
+            const fileName = `Love4CreditCard_${new Date().toISOString().split('T')[0]}.xlsx`;
+            XLSX.writeFile(wb, fileName);
+            showNotification('Đã xuất Excel!');
+        }
+
+        function showSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        function changePassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
+            if (!newPass || !confirmPass) {
+                showNotification('Nhập đầy đủ!', 'error');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                showNotification('Mật khẩu không khớp!', 'error');
+                return;
+            }
+            const newUserHash = btoa(newPass);
+            localStorage.setItem(`l4cc_data_${newUserHash}`, JSON.stringify(customers));
+            localStorage.removeItem(`l4cc_data_${currentUser}`);
+            currentUser = newUserHash;
+            localStorage.setItem('l4cc_user', newUserHash);
+            closeSettings();
+            showNotification('Đã đổi mật khẩu!');
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('l4cc_user');
+                currentUser = null;
+                customers = [];
+                showAuthScreen();
+                showNotification('Đã đăng xuất!');
+            }
+        }
+
+        function showNotification(message, type = 'success') {
+            const notification = document.createElement('div');
+            notification.className = 'notification';
+            notification.textContent = message;
+            if (type === 'error') {
+                notification.style.background = 'var(--accent-red)';
+            }
+            document.body.appendChild(notification);
+            setTimeout(() => notification.remove(), 3000);
+        }
+
+        function setupEventListeners() {
+            document.getElementById('searchCustomer').addEventListener('input', renderCustomerList);
+        }
+
+        init();
+    </script>
+</body>
+</html>
