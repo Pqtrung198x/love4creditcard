@@ -750,6 +750,17 @@
             </div>
             
             <button class="btn btn-primary" onclick="changePassword()">Đổi mật khẩu</button>
+            
+            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
+                <div style="margin-bottom: 12px; font-weight: 600;">📦 Đồng bộ dữ liệu</div>
+                <button class="btn btn-secondary" onclick="exportData()">📤 Xuất dữ liệu JSON</button>
+                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Nhập dữ liệu JSON</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px; text-align: center;">
+                    Xuất dữ liệu để backup hoặc chuyển sang thiết bị khác
+                </p>
+            </div>
+            
             <button class="btn btn-danger" onclick="logout()">Đăng xuất</button>
         </div>
     </div>
@@ -1382,6 +1393,74 @@
             localStorage.setItem('l4cc_user', newUserHash);
             closeSettings();
             showToast('Đã đổi mật khẩu!');
+        }
+
+        function exportData() {
+            if (customers.length === 0) {
+                showToast('Không có dữ liệu để xuất!');
+                return;
+            }
+            
+            const exportData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                customersCount: customers.length,
+                data: customers
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `love4cc_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showToast('Đã xuất dữ liệu!');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                showToast('Vui lòng chọn file JSON!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (!importedData.data || !Array.isArray(importedData.data)) {
+                        showToast('File không đúng định dạng!');
+                        return;
+                    }
+                    
+                    const action = confirm(
+                        `Tìm thấy ${importedData.customersCount} khách hàng.\n\n` +
+                        `Nhấn OK để GHI ĐÈ dữ liệu hiện tại.\n` +
+                        `Nhấn Cancel để HỦY.`
+                    );
+                    
+                    if (action) {
+                        customers = importedData.data;
+                        saveUserData();
+                        renderCustomers();
+                        showToast(`Đã nhập ${importedData.customersCount} KH!`);
+                        closeSettings();
+                    }
+                } catch (error) {
+                    showToast('Lỗi đọc file!');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
         }
 
         function logout() {

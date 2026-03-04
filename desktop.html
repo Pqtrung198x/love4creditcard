@@ -971,6 +971,16 @@
             <button class="btn btn-primary btn-full" onclick="changePassword()">Đổi mật khẩu</button>
             
             <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
+                <h3 style="margin-bottom: 12px; font-size: 1rem; color: var(--text-dark);">📦 Đồng bộ dữ liệu</h3>
+                <button class="btn btn-secondary btn-full" onclick="exportData()">📤 Xuất dữ liệu JSON</button>
+                <button class="btn btn-secondary btn-full" onclick="document.getElementById('importFile').click()">📥 Nhập dữ liệu JSON</button>
+                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                <p style="font-size: 0.75rem; color: var(--text-secondary); margin-top: 8px; text-align: center;">
+                    Xuất dữ liệu để backup hoặc chuyển sang thiết bị khác
+                </p>
+            </div>
+            
+            <div style="margin-top: 20px; padding-top: 20px; border-top: 1px solid var(--border-color);">
                 <button class="btn btn-danger btn-full" onclick="logout()">Đăng xuất</button>
             </div>
         </div>
@@ -1715,6 +1725,74 @@
             localStorage.setItem('l4cc_user', newUserHash);
             closeSettings();
             showNotification('Đã đổi mật khẩu!');
+        }
+
+        function exportData() {
+            if (customers.length === 0) {
+                showNotification('Không có dữ liệu để xuất!', 'error');
+                return;
+            }
+            
+            const exportData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                customersCount: customers.length,
+                data: customers
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `love4cc_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showNotification('Đã xuất dữ liệu thành công!');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                showNotification('Vui lòng chọn file JSON!', 'error');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (!importedData.data || !Array.isArray(importedData.data)) {
+                        showNotification('File không đúng định dạng!', 'error');
+                        return;
+                    }
+                    
+                    const action = confirm(
+                        `Tìm thấy ${importedData.customersCount} khách hàng.\n\n` +
+                        `Nhấn OK để GHI ĐÈ dữ liệu hiện tại.\n` +
+                        `Nhấn Cancel để HỦY.`
+                    );
+                    
+                    if (action) {
+                        customers = importedData.data;
+                        saveUserData();
+                        renderCustomerList();
+                        showNotification(`Đã nhập ${importedData.customersCount} khách hàng!`);
+                        closeSettings();
+                    }
+                } catch (error) {
+                    showNotification('Lỗi đọc file! File có thể bị hỏng.', 'error');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
         }
 
         function logout() {
