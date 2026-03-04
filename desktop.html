@@ -928,6 +928,36 @@
                     </small>
                 </div>
 
+                <div class="form-group" style="border-top: 1px solid var(--border-color); padding-top: 15px; margin-top: 15px;">
+                    <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
+                        <input type="checkbox" id="isMultiMonth" onchange="toggleMultiMonth()" style="width: auto;">
+                        <span>📅 Đáo hạn nhiều tháng (Để tiền trong thẻ qua nhiều kỳ)</span>
+                    </label>
+                </div>
+
+                <div id="multiMonthSection" style="display: none;">
+                    <div class="form-group">
+                        <label class="form-label">Số tháng đáo *</label>
+                        <input type="number" class="form-input" id="monthCount" min="2" max="12" value="2" placeholder="VD: 3 tháng">
+                        <small style="color: var(--text-secondary); font-size: 0.7rem; display: block; margin-top: 3px;">
+                            Số tháng để tiền trong thẻ (tính từ ngày nạp đến ngày rút)
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Lịch sử số tiền theo tháng</label>
+                        <div id="monthlyAmounts" style="background: var(--bg-light); padding: 10px; border-radius: 4px;"></div>
+                        <small style="color: var(--text-secondary); font-size: 0.7rem; display: block; margin-top: 3px;">
+                            Nhập số tiền để trong thẻ mỗi tháng. Phí sẽ tự động tính theo từng tháng.
+                        </small>
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Tổng phí dự tính</label>
+                        <div id="totalMultiMonthFee" style="background: rgba(229, 57, 53, 0.1); padding: 10px; border-radius: 4px; font-weight: bold; color: var(--accent-red);"></div>
+                    </div>
+                </div>
+
                 <div class="form-group">
                     <label class="form-label">Trạng thái *</label>
                     <select class="form-select" id="cardStatus" required>
@@ -1241,7 +1271,13 @@
                 totalCurrentBalance += card.currentBalance;
                 totalDeposit += card.depositAmount;
                 totalWithdraw += card.withdrawAmount;
-                totalFee += calculateFee(card.feePercent, card.feeCalculation, card.depositAmount, card.withdrawAmount, card.additionalFee);
+                
+                // Tính phí đúng (multi-month hoặc thường)
+                if (card.multiMonth && card.multiMonth.enabled) {
+                    totalFee += card.multiMonth.totalFee;
+                } else {
+                    totalFee += calculateFee(card.feePercent, card.feeCalculation, card.depositAmount, card.withdrawAmount, card.additionalFee);
+                }
             });
 
             const totalAvailable = totalCreditLimit - totalCurrentBalance;
@@ -1393,9 +1429,48 @@
         function renderCardDetail(customer, card) {
             const container = document.getElementById('cardDetailContainer');
             const bank = getBankInfo(card.bankId);
-            const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
-            const additionalFee = card.additionalFee || 0;
-            const totalFee = baseFee + additionalFee;
+            
+            // Tính phí
+            let totalFee = 0;
+            let feeBreakdown = '';
+            
+            if (card.multiMonth && card.multiMonth.enabled) {
+                // Đáo nhiều tháng
+                totalFee = card.multiMonth.totalFee;
+                feeBreakdown = `
+                    <div class="money-row" style="background: rgba(124, 179, 66, 0.05); padding: 8px; margin: 0 -12px 8px -12px; padding-left: 12px; padding-right: 12px;">
+                        <span><strong>📅 ĐÁO ${card.multiMonth.monthCount} THÁNG:</strong></span>
+                        <span></span>
+                    </div>
+                    ${card.multiMonth.monthlyAmounts.map(item => `
+                        <div class="money-row">
+                            <span>• Tháng ${item.month}: ${formatMoney(item.amount)} × ${card.feePercent}%</span>
+                            <span><strong>${formatMoney(item.fee)}</strong></span>
+                        </div>
+                    `).join('')}
+                `;
+            } else {
+                // Đáo thường (1 tháng)
+                const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                const additionalFee = card.additionalFee || 0;
+                totalFee = baseFee + additionalFee;
+                
+                feeBreakdown = `
+                    <div class="money-row">
+                        <span>Phí cơ bản (${card.feePercent}% trên ${card.feeCalculation === 'withdraw' ? 'rút' : 'nạp'}):</span>
+                        <span><strong>${formatMoney(baseFee)}</strong></span>
+                    </div>
+                    ${additionalFee !== 0 ? `
+                    <div class="money-row">
+                        <span>Phụ thu phí (${additionalFee > 0 ? 'Thu thêm' : 'Giảm trừ'}):</span>
+                        <span style="color: ${additionalFee > 0 ? 'var(--accent-red)' : 'var(--primary-green)'};">
+                            <strong>${additionalFee > 0 ? '+' : ''}${formatMoney(additionalFee)}</strong>
+                        </span>
+                    </div>
+                    ` : ''}
+                `;
+            }
+            
             const finalResult = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
             const resultDisplay = formatResult(finalResult);
             const daysRemaining = getDaysUntilPayment(card.paymentDay);
@@ -1455,18 +1530,7 @@
                         <span>Số tiền rút ra:</span>
                         <span><strong>${formatMoney(card.withdrawAmount)}</strong></span>
                     </div>
-                    <div class="money-row">
-                        <span>Phí cơ bản (${card.feePercent}% trên ${card.feeCalculation === 'withdraw' ? 'rút' : 'nạp'}):</span>
-                        <span><strong>${formatMoney(baseFee)}</strong></span>
-                    </div>
-                    ${additionalFee !== 0 ? `
-                    <div class="money-row">
-                        <span>Phụ thu phí (${additionalFee > 0 ? 'Thu thêm' : 'Giảm trừ'}):</span>
-                        <span style="color: ${additionalFee > 0 ? 'var(--accent-red)' : 'var(--primary-green)'};">
-                            <strong>${additionalFee > 0 ? '+' : ''}${formatMoney(additionalFee)}</strong>
-                        </span>
-                    </div>
-                    ` : ''}
+                    ${feeBreakdown}
                     <div class="money-row" style="background: rgba(124, 179, 66, 0.1); padding: 8px; margin: 0 -12px; padding-left: 12px; padding-right: 12px;">
                         <span><strong>TỔNG TIỀN PHÍ:</strong></span>
                         <span style="color: var(--accent-red); font-size: 1.05rem;">
@@ -1584,6 +1648,25 @@
             document.getElementById('additionalFee').value = card.additionalFee || '';
             document.getElementById('cardStatus').value = card.status;
             document.getElementById('notes').value = card.notes || '';
+            
+            // Load multi-month data
+            if (card.multiMonth && card.multiMonth.enabled) {
+                document.getElementById('isMultiMonth').checked = true;
+                document.getElementById('multiMonthSection').style.display = 'block';
+                document.getElementById('monthCount').value = card.multiMonth.monthCount;
+                generateMonthlyInputs();
+                
+                // Fill in monthly amounts
+                card.multiMonth.monthlyAmounts.forEach(item => {
+                    const input = document.getElementById(`month${item.month}Amount`);
+                    if (input) input.value = item.amount;
+                });
+                calculateMultiMonthFee();
+            } else {
+                document.getElementById('isMultiMonth').checked = false;
+                document.getElementById('multiMonthSection').style.display = 'none';
+            }
+            
             document.getElementById('cardModal').classList.add('active');
         }
 
@@ -1608,6 +1691,34 @@
             const customer = customers.find(c => c.id === customerId);
             if (!customer) return;
             const additionalFeeValue = document.getElementById('additionalFee').value;
+            
+            // Xử lý đáo nhiều tháng
+            let multiMonthData = null;
+            const isMultiMonth = document.getElementById('isMultiMonth').checked;
+            
+            if (isMultiMonth) {
+                const monthCount = parseInt(document.getElementById('monthCount').value);
+                const monthlyAmounts = [];
+                let totalMultiMonthFee = 0;
+                
+                for (let i = 1; i <= monthCount; i++) {
+                    const amount = parseInt(document.getElementById(`month${i}Amount`)?.value) || 0;
+                    if (amount > 0) {
+                        const feePercent = parseFloat(document.getElementById('feePercent').value);
+                        const fee = Math.round(amount * feePercent / 100);
+                        monthlyAmounts.push({ month: i, amount: amount, fee: fee });
+                        totalMultiMonthFee += fee;
+                    }
+                }
+                
+                multiMonthData = {
+                    enabled: true,
+                    monthCount: monthCount,
+                    monthlyAmounts: monthlyAmounts,
+                    totalFee: totalMultiMonthFee
+                };
+            }
+            
             const cardData = {
                 id: editingCardId || Date.now().toString(),
                 bankId: document.getElementById('bankSelect').value,
@@ -1620,6 +1731,7 @@
                 feePercent: parseFloat(document.getElementById('feePercent').value),
                 feeCalculation: document.getElementById('feeCalculation').value,
                 additionalFee: additionalFeeValue ? parseInt(additionalFeeValue) : 0,
+                multiMonth: multiMonthData,
                 status: document.getElementById('cardStatus').value,
                 notes: document.getElementById('notes').value,
                 createdAt: editingCardId ? customer.cards.find(c => c.id === editingCardId).createdAt : new Date().toISOString()
@@ -1819,6 +1931,90 @@
         function setupEventListeners() {
             document.getElementById('searchCustomer').addEventListener('input', renderCustomerList);
         }
+
+        function toggleMultiMonth() {
+            const isChecked = document.getElementById('isMultiMonth').checked;
+            const section = document.getElementById('multiMonthSection');
+            
+            if (isChecked) {
+                section.style.display = 'block';
+                generateMonthlyInputs();
+            } else {
+                section.style.display = 'none';
+            }
+        }
+
+        function generateMonthlyInputs() {
+            const monthCount = parseInt(document.getElementById('monthCount').value) || 2;
+            const container = document.getElementById('monthlyAmounts');
+            const feePercent = parseFloat(document.getElementById('feePercent').value) || 0;
+            
+            let html = '';
+            for (let i = 1; i <= monthCount; i++) {
+                html += `
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 3px;">
+                            Tháng ${i}:
+                        </label>
+                        <input type="number" 
+                               class="form-input monthly-amount" 
+                               id="month${i}Amount" 
+                               placeholder="Số tiền tháng ${i}"
+                               onchange="calculateMultiMonthFee()"
+                               style="font-size: 0.85rem; padding: 6px 8px;">
+                    </div>
+                `;
+            }
+            container.innerHTML = html;
+            calculateMultiMonthFee();
+        }
+
+        function calculateMultiMonthFee() {
+            const monthCount = parseInt(document.getElementById('monthCount').value) || 2;
+            const feePercent = parseFloat(document.getElementById('feePercent').value) || 0;
+            let totalFee = 0;
+            let breakdown = [];
+            
+            for (let i = 1; i <= monthCount; i++) {
+                const amount = parseInt(document.getElementById(`month${i}Amount`)?.value) || 0;
+                if (amount > 0) {
+                    const monthFee = Math.round(amount * feePercent / 100);
+                    totalFee += monthFee;
+                    breakdown.push(`Tháng ${i}: ${formatMoney(amount)} × ${feePercent}% = ${formatMoney(monthFee)}`);
+                }
+            }
+            
+            const resultDiv = document.getElementById('totalMultiMonthFee');
+            if (totalFee > 0) {
+                resultDiv.innerHTML = `
+                    <div style="margin-bottom: 8px;">
+                        ${breakdown.join('<br>')}
+                    </div>
+                    <div style="border-top: 1px solid var(--accent-red); padding-top: 8px; margin-top: 8px;">
+                        <strong>Tổng phí ${monthCount} tháng: ${formatMoney(totalFee)}</strong>
+                    </div>
+                `;
+            } else {
+                resultDiv.innerHTML = 'Nhập số tiền từng tháng và phí % để xem dự tính';
+            }
+        }
+
+        // Update monthCount listener
+        document.addEventListener('DOMContentLoaded', function() {
+            const monthCountInput = document.getElementById('monthCount');
+            if (monthCountInput) {
+                monthCountInput.addEventListener('change', generateMonthlyInputs);
+            }
+            
+            const feePercentInput = document.getElementById('feePercent');
+            if (feePercentInput) {
+                feePercentInput.addEventListener('change', function() {
+                    if (document.getElementById('isMultiMonth').checked) {
+                        calculateMultiMonthFee();
+                    }
+                });
+            }
+        });
 
         init();
     </script>
