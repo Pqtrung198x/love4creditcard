@@ -1,16 +1,57 @@
 <!DOCTYPE html>
-<html lang="vi">
+<html lang="vi" data-theme="light">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
     <meta name="apple-mobile-web-app-capable" content="yes">
     <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-    <meta name="apple-mobile-web-app-title" content="Love4CreditCard">
-    <meta name="theme-color" content="#7cb342">
-    <title>Love4CreditCard - iOS</title>
-    <link rel="manifest" href="#" id="manifestPlaceholder">
+    <meta name="apple-mobile-web-app-title" content="Đáo Hạn PQT">
+    <meta name="theme-color" content="#4A90E2">
+    <title>Đáo Hạn PQT</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
+        :root {
+            --primary: #4A90E2;
+            --primary-dark: #3A7BC8;
+            --primary-light: #6BA3E8;
+            --success: #52C41A;
+            --danger: #FF4D4F;
+            --warning: #FAAD14;
+            --info: #1890FF;
+            --bg: #F5F7FA;
+            --card-bg: #FFFFFF;
+            --text: #2C3E50;
+            --text-secondary: #7F8C8D;
+            --border: #E8ECEF;
+            --shadow: rgba(0, 0, 0, 0.08);
+            --shadow-lg: rgba(0, 0, 0, 0.15);
+            --overlay: rgba(0, 0, 0, 0.5);
+            
+            --safe-top: env(safe-area-inset-top);
+            --safe-bottom: env(safe-area-inset-bottom);
+            
+            --transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        [data-theme="dark"] {
+            --primary: #5FA3EF;
+            --primary-dark: #4A90E2;
+            --primary-light: #7AB5F2;
+            --success: #73D13D;
+            --danger: #FF7875;
+            --warning: #FFC53D;
+            --info: #40A9FF;
+            --bg: #0F1419;
+            --card-bg: #1C2128;
+            --text: #E8EAED;
+            --text-secondary: #9CA3AF;
+            --border: #30363D;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --shadow-lg: rgba(0, 0, 0, 0.5);
+            --overlay: rgba(0, 0, 0, 0.7);
+        }
+
         * {
             margin: 0;
             padding: 0;
@@ -18,205 +59,305 @@
             -webkit-tap-highlight-color: transparent;
         }
 
-        :root {
-            --primary: #7cb342;
-            --primary-dark: #558b2f;
-            --accent: #9c27b0;
-            --danger: #e53935;
-            --bg: #f2f2f7;
-            --card-bg: #ffffff;
-            --text: #000000;
-            --text-secondary: #8e8e93;
-            --border: #c6c6c8;
-            --safe-area-top: env(safe-area-inset-top);
-            --safe-area-bottom: env(safe-area-inset-bottom);
-        }
-
-        @media (prefers-color-scheme: dark) {
-            :root {
-                --bg: #000000;
-                --card-bg: #1c1c1e;
-                --text: #ffffff;
-                --text-secondary: #8e8e93;
-                --border: #38383a;
-            }
-        }
-
         body {
-            font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+            font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
             background: var(--bg);
             color: var(--text);
             overflow-x: hidden;
-            padding-top: var(--safe-area-top);
-            padding-bottom: calc(var(--safe-area-bottom) + 65px);
+            transition: var(--transition);
+            padding-bottom: calc(70px + var(--safe-bottom));
         }
 
-        .status-bar {
-            position: fixed;
+        /* Header Banner */
+        .header-banner {
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            padding: calc(var(--safe-top) + 16px) 16px 20px;
+            color: white;
+            box-shadow: 0 4px 12px var(--shadow-lg);
+            position: sticky;
             top: 0;
-            left: 0;
-            right: 0;
-            height: calc(44px + var(--safe-area-top));
-            background: var(--card-bg);
-            border-bottom: 0.5px solid var(--border);
-            z-index: 1000;
-            display: flex;
-            align-items: flex-end;
-            padding: 0 16px 8px 16px;
+            z-index: 100;
+            backdrop-filter: blur(10px);
         }
 
-        .status-bar-content {
+        .header-top {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 16px;
+        }
+
+        .app-title {
             display: flex;
             align-items: center;
-            justify-content: space-between;
-            width: 100%;
+            gap: 12px;
         }
 
-        .status-bar-title {
-            font-size: 17px;
-            font-weight: 600;
-            color: var(--text);
+        .app-logo {
+            width: 44px;
+            height: 44px;
+            background: rgba(255, 255, 255, 0.95);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 26px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
         }
 
-        .status-bar-action {
-            background: none;
+        .app-name {
+            font-size: 22px;
+            font-weight: 700;
+            letter-spacing: -0.5px;
+            text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        .theme-toggle {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.2);
             border: none;
-            color: var(--primary);
-            font-size: 17px;
-            padding: 0;
+            color: white;
+            font-size: 20px;
             cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .content {
-            margin-top: calc(44px + var(--safe-area-top));
-            padding: 0 0 20px 0;
-            min-height: calc(100vh - 44px - 65px - var(--safe-area-top) - var(--safe-area-bottom));
+        .theme-toggle:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.3);
         }
 
-        .search-bar {
-            background: var(--card-bg);
-            padding: 8px 16px;
-            border-bottom: 0.5px solid var(--border);
+        .search-box {
+            position: relative;
         }
 
         .search-input {
             width: 100%;
-            padding: 8px 12px;
-            background: var(--bg);
+            padding: 14px 45px 14px 16px;
+            border-radius: 14px;
             border: none;
-            border-radius: 10px;
-            font-size: 15px;
+            background: rgba(255, 255, 255, 0.95);
+            font-size: 16px;
             color: var(--text);
+            font-family: inherit;
+            backdrop-filter: blur(10px);
+        }
+
+        .search-input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        .search-input:focus {
+            outline: none;
+            background: white;
+        }
+
+        .search-icon {
+            position: absolute;
+            right: 16px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: var(--text-secondary);
+            font-size: 18px;
+            pointer-events: none;
+        }
+
+        /* Tabs */
+        .tabs-container {
+            padding: 0 16px;
+            margin-top: -8px;
+            position: relative;
+            z-index: 50;
         }
 
         .tabs {
-            background: var(--card-bg);
             display: flex;
-            padding: 0;
-            border-bottom: 0.5px solid var(--border);
+            background: var(--card-bg);
+            border-radius: 14px;
+            padding: 4px;
+            box-shadow: 0 2px 12px var(--shadow);
+            gap: 4px;
         }
 
         .tab {
             flex: 1;
-            padding: 12px;
-            background: none;
-            border: none;
+            padding: 12px 8px;
+            text-align: center;
+            border-radius: 10px;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text-secondary);
-            font-size: 15px;
-            position: relative;
             cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .tab i {
+            font-size: 18px;
         }
 
         .tab.active {
-            color: var(--primary);
-        }
-
-        .tab.active::after {
-            content: '';
-            position: absolute;
-            bottom: 0;
-            left: 0;
-            right: 0;
-            height: 2px;
             background: var(--primary);
-        }
-
-        .tab-badge {
-            background: var(--danger);
             color: white;
-            padding: 2px 6px;
-            border-radius: 10px;
-            font-size: 11px;
-            margin-left: 4px;
+            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
         }
 
-        .card-list {
+        /* Customer Grid */
+        .customers-section {
             padding: 16px;
+        }
+
+        .customers-grid {
             display: grid;
+            grid-template-columns: repeat(2, 1fr);
             gap: 12px;
         }
 
-        .card {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        @media (min-width: 768px) {
+            .customers-grid {
+                grid-template-columns: repeat(3, 1fr);
+            }
         }
 
-        .card-header {
+        .customer-card {
+            background: var(--card-bg);
+            border-radius: 16px;
+            padding: 16px;
+            box-shadow: 0 2px 8px var(--shadow);
+            cursor: pointer;
+            transition: var(--transition);
+            border: 1px solid var(--border);
+        }
+
+        .customer-card:active {
+            transform: scale(0.98);
+        }
+
+        .customer-header {
             display: flex;
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 12px;
         }
 
-        .card-title {
-            font-size: 17px;
-            font-weight: 600;
-            margin-bottom: 4px;
+        .customer-info {
+            flex: 1;
+            min-width: 0;
         }
 
-        .card-subtitle {
+        .customer-name {
+            font-size: 16px;
+            font-weight: 700;
+            color: var(--text);
+            margin-bottom: 4px;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            white-space: nowrap;
+        }
+
+        .customer-phone {
             font-size: 13px;
             color: var(--text-secondary);
+            display: flex;
+            align-items: center;
+            gap: 4px;
         }
 
-        .card-badges {
+        .customer-phone i {
+            font-size: 11px;
+        }
+
+        .customer-actions {
             display: flex;
             gap: 6px;
-            flex-wrap: wrap;
-            margin-top: 8px;
+            flex-shrink: 0;
         }
 
-        .badge {
-            padding: 4px 8px;
-            border-radius: 6px;
-            font-size: 12px;
+        .icon-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 10px;
+            border: none;
             background: var(--bg);
-            color: var(--text-secondary);
+            color: var(--text);
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
-        .badge.primary {
-            background: rgba(124, 179, 66, 0.15);
+        .icon-btn:active {
+            transform: scale(0.9);
+        }
+
+        .icon-btn.edit {
+            color: var(--primary);
+            background: rgba(74, 144, 226, 0.1);
+        }
+
+        .icon-btn.delete {
+            color: var(--danger);
+            background: rgba(255, 77, 79, 0.1);
+        }
+
+        .customer-stats {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 8px;
+            padding-top: 12px;
+            border-top: 1px solid var(--border);
+        }
+
+        .stat-item {
+            text-align: center;
+        }
+
+        .stat-label {
+            font-size: 11px;
+            color: var(--text-secondary);
+            margin-bottom: 4px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .stat-value {
+            font-size: 15px;
+            font-weight: 700;
             color: var(--primary);
         }
 
-        .badge.danger {
-            background: rgba(229, 57, 53, 0.15);
+        .stat-value.negative {
             color: var(--danger);
         }
 
+        .stat-value.positive {
+            color: var(--success);
+        }
+
+        /* Bottom Navigation */
         .bottom-nav {
             position: fixed;
             bottom: 0;
             left: 0;
             right: 0;
-            height: calc(50px + var(--safe-area-bottom));
             background: var(--card-bg);
-            border-top: 0.5px solid var(--border);
+            border-top: 1px solid var(--border);
+            padding: 8px 8px calc(8px + var(--safe-bottom));
             display: flex;
-            padding-bottom: var(--safe-area-bottom);
-            z-index: 1000;
+            justify-content: space-around;
+            box-shadow: 0 -2px 12px var(--shadow);
+            z-index: 100;
+            backdrop-filter: blur(20px);
         }
 
         .nav-item {
@@ -224,48 +365,65 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            justify-content: center;
             gap: 4px;
-            background: none;
-            border: none;
-            color: var(--text-secondary);
-            font-size: 10px;
+            padding: 8px;
+            border-radius: 12px;
             cursor: pointer;
-            padding: 8px 0;
+            transition: var(--transition);
+            color: var(--text-secondary);
+            max-width: 80px;
         }
 
         .nav-item.active {
+            background: rgba(74, 144, 226, 0.1);
             color: var(--primary);
+        }
+
+        .nav-item:active {
+            transform: scale(0.95);
         }
 
         .nav-icon {
             font-size: 24px;
         }
 
+        .nav-label {
+            font-size: 11px;
+            font-weight: 600;
+        }
+
+        /* Modals */
         .modal {
             position: fixed;
             top: 0;
             left: 0;
             right: 0;
             bottom: 0;
-            background: rgba(0,0,0,0.4);
-            z-index: 2000;
+            background: var(--overlay);
             display: none;
             align-items: flex-end;
+            z-index: 1000;
+            animation: fadeIn 0.3s;
+            backdrop-filter: blur(4px);
         }
 
         .modal.active {
             display: flex;
         }
 
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 1; }
+        }
+
         .modal-content {
             background: var(--card-bg);
-            border-radius: 20px 20px 0 0;
+            border-radius: 24px 24px 0 0;
             width: 100%;
             max-height: 90vh;
             overflow-y: auto;
-            padding: 20px 16px calc(20px + var(--safe-area-bottom)) 16px;
-            animation: slideUp 0.3s ease;
+            animation: slideUp 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+            padding-bottom: calc(20px + var(--safe-bottom));
         }
 
         @keyframes slideUp {
@@ -274,523 +432,634 @@
         }
 
         .modal-header {
+            position: sticky;
+            top: 0;
+            background: var(--card-bg);
+            padding: 20px;
+            border-bottom: 1px solid var(--border);
             display: flex;
             justify-content: space-between;
             align-items: center;
-            margin-bottom: 20px;
+            z-index: 10;
+            backdrop-filter: blur(20px);
         }
 
         .modal-title {
-            font-size: 20px;
-            font-weight: 600;
+            font-size: 22px;
+            font-weight: 700;
+            color: var(--text);
         }
 
+        .close-btn {
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            border: none;
+            background: var(--bg);
+            color: var(--text);
+            font-size: 20px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: var(--transition);
+        }
+
+        .close-btn:active {
+            transform: scale(0.9);
+        }
+
+        .modal-body {
+            padding: 20px;
+        }
+
+        /* Form Elements */
         .form-group {
-            margin-bottom: 16px;
+            margin-bottom: 20px;
         }
 
         .form-label {
             display: block;
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-
-        .form-input, .form-select {
-            width: 100%;
-            padding: 12px;
-            background: var(--bg);
-            border: none;
-            border-radius: 10px;
-            font-size: 15px;
+            font-size: 14px;
+            font-weight: 600;
             color: var(--text);
+            margin-bottom: 8px;
         }
 
+        .form-label-required::after {
+            content: ' *';
+            color: var(--danger);
+        }
+
+        .form-input, .form-select, .form-textarea {
+            width: 100%;
+            padding: 14px 16px;
+            border-radius: 12px;
+            border: 1.5px solid var(--border);
+            background: var(--bg);
+            color: var(--text);
+            font-size: 16px;
+            font-family: inherit;
+            transition: var(--transition);
+        }
+
+        .form-input:focus, .form-select:focus, .form-textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: var(--card-bg);
+            box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
+        }
+
+        .form-textarea {
+            min-height: 100px;
+            resize: vertical;
+        }
+
+        .form-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 6px;
+        }
+
+        .form-row {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 12px;
+        }
+
+        /* Buttons */
         .btn {
             width: 100%;
-            padding: 14px;
+            padding: 16px;
+            border-radius: 14px;
             border: none;
-            border-radius: 10px;
-            font-size: 17px;
+            font-size: 16px;
             font-weight: 600;
             cursor: pointer;
+            transition: var(--transition);
             margin-bottom: 8px;
+            font-family: inherit;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn:active {
+            transform: scale(0.98);
         }
 
         .btn-primary {
             background: var(--primary);
             color: white;
+            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+        }
+
+        .btn-secondary {
+            background: var(--bg);
+            color: var(--text);
         }
 
         .btn-danger {
             background: var(--danger);
             color: white;
+            box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
         }
 
-        .btn-secondary {
-            background: var(--bg);
-            color: var(--primary);
+        /* FAB */
+        .fab {
+            position: fixed;
+            bottom: calc(80px + var(--safe-bottom));
+            right: 20px;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            background: var(--primary);
+            color: white;
+            border: none;
+            font-size: 26px;
+            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
+            cursor: pointer;
+            transition: var(--transition);
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
 
+        .fab:active {
+            transform: scale(0.95);
+        }
+
+        /* Toast */
+        .toast {
+            position: fixed;
+            top: calc(var(--safe-top) + 80px);
+            left: 50%;
+            transform: translateX(-50%);
+            background: var(--card-bg);
+            color: var(--text);
+            padding: 14px 24px;
+            border-radius: 14px;
+            box-shadow: 0 6px 20px var(--shadow-lg);
+            font-size: 15px;
+            font-weight: 600;
+            z-index: 2000;
+            animation: toastIn 0.3s;
+            border: 1px solid var(--border);
+            max-width: calc(100% - 40px);
+        }
+
+        @keyframes toastIn {
+            from {
+                opacity: 0;
+                transform: translateX(-50%) translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateX(-50%) translateY(0);
+            }
+        }
+
+        /* Empty State */
         .empty-state {
             text-align: center;
             padding: 60px 20px;
             color: var(--text-secondary);
+            grid-column: 1 / -1;
         }
 
         .empty-icon {
-            font-size: 48px;
-            margin-bottom: 12px;
+            font-size: 64px;
+            margin-bottom: 16px;
+            opacity: 0.5;
         }
 
-        .detail-page {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            bottom: 0;
-            background: var(--bg);
-            z-index: 1500;
-            overflow-y: auto;
-        }
-
-        .detail-page.active {
-            display: block;
-            animation: slideIn 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from { transform: translateX(100%); }
-            to { transform: translateX(0); }
-        }
-
-        .detail-header {
-            position: sticky;
-            top: 0;
-            background: var(--card-bg);
-            padding: calc(var(--safe-area-top) + 8px) 16px 8px 16px;
-            border-bottom: 0.5px solid var(--border);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            z-index: 10;
-        }
-
-        .back-btn {
-            background: none;
-            border: none;
-            color: var(--primary);
-            font-size: 28px;
-            cursor: pointer;
-            padding: 0;
-        }
-
-        .detail-title {
-            font-size: 17px;
-            font-weight: 600;
-        }
-
-        .info-section {
-            background: var(--card-bg);
-            margin: 12px 16px;
-            border-radius: 12px;
-            padding: 16px;
-        }
-
-        .info-row {
-            display: flex;
-            justify-content: space-between;
-            padding: 8px 0;
-            border-bottom: 0.5px solid var(--border);
-        }
-
-        .info-row:last-child {
-            border-bottom: none;
-        }
-
-        .info-label {
-            font-size: 15px;
-            color: var(--text-secondary);
-        }
-
-        .info-value {
-            font-size: 15px;
+        .empty-text {
+            font-size: 16px;
+            margin-bottom: 8px;
             font-weight: 500;
-            color: var(--text);
-            text-align: right;
         }
 
-        .info-value.positive {
-            color: var(--primary);
-        }
-
-        .info-value.negative {
-            color: var(--danger);
-        }
-
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 12px;
-            padding: 16px;
-        }
-
-        .summary-item {
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            text-align: center;
-        }
-
-        .summary-label {
-            font-size: 13px;
-            color: var(--text-secondary);
-            margin-bottom: 6px;
-        }
-
-        .summary-value {
-            font-size: 20px;
-            font-weight: 600;
-        }
-
-        .login-container {
+        /* Login Screen */
+        .login-screen {
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
             min-height: 100vh;
-            padding: 20px;
+            padding: 40px 20px;
+            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+        }
+
+        .login-card {
+            background: white;
+            border-radius: 24px;
+            padding: 40px 28px;
+            width: 100%;
+            max-width: 400px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
         }
 
         .login-logo {
-            font-size: 64px;
-            margin-bottom: 24px;
+            font-size: 80px;
+            text-align: center;
+            margin-bottom: 20px;
         }
 
         .login-title {
             font-size: 28px;
             font-weight: 700;
+            text-align: center;
             margin-bottom: 8px;
+            color: var(--text);
         }
 
         .login-subtitle {
             font-size: 15px;
+            text-align: center;
             color: var(--text-secondary);
             margin-bottom: 32px;
-            text-align: center;
+            line-height: 1.5;
         }
 
-        .login-form {
-            width: 100%;
-            max-width: 400px;
-        }
-
-        .toast {
-            position: fixed;
-            top: calc(var(--safe-area-top) + 60px);
-            left: 16px;
-            right: 16px;
-            background: var(--card-bg);
-            border-radius: 12px;
-            padding: 16px;
-            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
-            z-index: 3000;
-            animation: slideDown 0.3s ease;
-        }
-
-        @keyframes slideDown {
-            from { transform: translateY(-100px); opacity: 0; }
-            to { transform: translateY(0); opacity: 1; }
-        }
-
-        .column-selector {
+        /* Page Transitions */
+        .page {
             display: none;
         }
 
-        .action-buttons {
-            display: flex;
-            gap: 8px;
-            margin-top: 8px;
+        .page.active {
+            display: block;
+            animation: fadeInUp 0.3s;
         }
 
-        .action-btn {
-            flex: 1;
-            padding: 8px;
-            border: none;
-            border-radius: 8px;
-            font-size: 13px;
-            cursor: pointer;
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
         }
 
-        .action-btn.edit {
-            background: var(--primary);
-            color: white;
+        /* Loading Spinner */
+        .spinner {
+            width: 40px;
+            height: 40px;
+            border: 4px solid var(--border);
+            border-top-color: var(--primary);
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+            margin: 20px auto;
         }
 
-        .action-btn.delete {
-            background: var(--danger);
-            color: white;
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+
+        /* Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        ::-webkit-scrollbar-track {
+            background: var(--bg);
+        }
+
+        ::-webkit-scrollbar-thumb {
+            background: var(--border);
+            border-radius: 4px;
+        }
+
+        ::-webkit-scrollbar-thumb:hover {
+            background: var(--text-secondary);
         }
     </style>
 </head>
 <body>
     <!-- Login Screen -->
-    <div id="loginScreen">
-        <div class="login-container">
+    <div id="authScreen" class="login-screen">
+        <div class="login-card">
             <div class="login-logo">💳</div>
-            <div class="login-title">Love4CreditCard</div>
-            <div class="login-subtitle">Quản lý đáo hạn thẻ tín dụng chuyên nghiệp</div>
-            <form id="loginForm" class="login-form">
-                <div class="form-group">
-                    <input type="password" class="form-input" id="loginPassword" placeholder="Nhập mật khẩu" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Đăng nhập</button>
-            </form>
+            <h1 class="login-title">Đáo Hạn PQT</h1>
+            <p class="login-subtitle">Quản lý đáo hạn thẻ tín dụng chuyên nghiệp</p>
+            
+            <div class="form-group">
+                <label class="form-label form-label-required">Mật khẩu</label>
+                <input type="password" class="form-input" id="loginPassword" placeholder="Nhập mật khẩu" autofocus>
+            </div>
+            
+            <button class="btn btn-primary" onclick="login()">
+                <i class="fas fa-sign-in-alt"></i>
+                Đăng nhập
+            </button>
         </div>
     </div>
 
     <!-- Main App -->
     <div id="mainApp" style="display: none;">
-        <!-- Status Bar -->
-        <div class="status-bar">
-            <div class="status-bar-content">
-                <div class="status-bar-title" id="statusBarTitle">Khách hàng</div>
-                <button class="status-bar-action" id="settingsBtn">⚙️</button>
+        <!-- Header Banner -->
+        <div class="header-banner">
+            <div class="header-top">
+                <div class="app-title">
+                    <div class="app-logo">💳</div>
+                    <div class="app-name">Đáo Hạn PQT</div>
+                </div>
+                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                    <i class="fas fa-moon" id="themeIcon"></i>
+                </button>
+            </div>
+            <div class="search-box">
+                <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm khách hàng...">
+                <i class="fas fa-search search-icon"></i>
             </div>
         </div>
 
-        <!-- Content -->
-        <div class="content">
-            <!-- Customer List Page -->
-            <div id="customerPage">
-                <div class="search-bar">
-                    <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm khách hàng...">
+        <!-- Tabs -->
+        <div class="tabs-container">
+            <div class="tabs">
+                <div class="tab active" data-tab="all" onclick="switchTab('all')">
+                    <i class="fas fa-list"></i>
+                    <span>Tất cả</span>
                 </div>
-                
-                <div class="tabs">
-                    <button class="tab active" data-tab="processing">
-                        Chưa xong
-                        <span class="tab-badge" id="processingBadge">0</span>
-                    </button>
-                    <button class="tab" data-tab="completed">
-                        Hoàn thành
-                        <span class="tab-badge" id="completedBadge">0</span>
-                    </button>
-                    <button class="tab" data-tab="no-contact">
-                        Không liên hệ
-                        <span class="tab-badge" id="noContactBadge">0</span>
-                    </button>
+                <div class="tab" data-tab="processing" onclick="switchTab('processing')">
+                    <i class="fas fa-clock"></i>
+                    <span>Đang xử lý</span>
                 </div>
-
-                <div class="card-list" id="customerList"></div>
+                <div class="tab" data-tab="completed" onclick="switchTab('completed')">
+                    <i class="fas fa-check-circle"></i>
+                    <span>Hoàn thành</span>
+                </div>
             </div>
+        </div>
 
-            <!-- Card List Detail Page -->
-            <div id="cardListPage" class="detail-page">
-                <div class="detail-header">
-                    <button class="back-btn" onclick="goBackToCustomers()">‹</button>
-                    <div class="detail-title" id="cardListTitle">Danh sách thẻ</div>
-                </div>
-
-                <div class="summary-grid" id="customerSummary"></div>
-
-                <div class="card-list" id="cardsList"></div>
+        <!-- Customers List Page -->
+        <div id="customersPage" class="page active">
+            <div class="customers-section">
+                <div class="customers-grid" id="customersGrid"></div>
             </div>
+        </div>
 
-            <!-- Card Detail Page -->
-            <div id="cardDetailPage" class="detail-page">
-                <div class="detail-header">
-                    <button class="back-btn" onclick="goBackToCardList()">‹</button>
-                    <div class="detail-title">Chi tiết thẻ</div>
-                </div>
+        <!-- Card List Page -->
+        <div id="cardListPage" class="page">
+            <div class="customers-section">
+                <button class="btn btn-secondary" onclick="goBackToCustomers()" style="margin-bottom: 16px;">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại
+                </button>
+                <div id="customerSummary"></div>
+                <div id="cardsList"></div>
+            </div>
+        </div>
 
+        <!-- Card Detail Page -->
+        <div id="cardDetailPage" class="page">
+            <div class="customers-section">
+                <button class="btn btn-secondary" onclick="goBackToCardList()" style="margin-bottom: 16px;">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại
+                </button>
                 <div id="cardDetailContent"></div>
             </div>
         </div>
 
+        <!-- FAB -->
+        <button class="fab" onclick="showAddCustomerModal()" aria-label="Add customer">
+            <i class="fas fa-plus"></i>
+        </button>
+
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
-            <button class="nav-item active" data-page="customer">
-                <div class="nav-icon">👥</div>
-                <div>Khách hàng</div>
-            </button>
-            <button class="nav-item" onclick="showAddCustomerModal()">
-                <div class="nav-icon">➕</div>
-                <div>Thêm mới</div>
-            </button>
-            <button class="nav-item" onclick="exportExcel()">
-                <div class="nav-icon">📊</div>
-                <div>Xuất Excel</div>
-            </button>
+            <div class="nav-item active" onclick="showCustomersView()">
+                <i class="fas fa-users nav-icon"></i>
+                <span class="nav-label">Khách hàng</span>
+            </div>
+            <div class="nav-item" onclick="exportExcel()">
+                <i class="fas fa-file-excel nav-icon"></i>
+                <span class="nav-label">Xuất Excel</span>
+            </div>
+            <div class="nav-item" onclick="showSettings()">
+                <i class="fas fa-cog nav-icon"></i>
+                <span class="nav-label">Cài đặt</span>
+            </div>
         </div>
     </div>
 
-    <!-- Modals -->
+    <!-- Customer Modal -->
     <div id="customerModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title" id="customerModalTitle">Thêm khách hàng</div>
-                <button class="status-bar-action" onclick="closeCustomerModal()">Đóng</button>
+                <button class="close-btn" onclick="closeCustomerModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <form id="customerForm">
-                <input type="hidden" id="customerId">
-                <div class="form-group">
-                    <label class="form-label">Tên khách hàng</label>
-                    <input type="text" class="form-input" id="customerName" required>
-                </div>
-                <div class="form-group">
-                    <label class="form-label">Số điện thoại</label>
-                    <input type="tel" class="form-input" id="customerPhone" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Lưu</button>
-                <button type="button" class="btn btn-secondary" onclick="closeCustomerModal()">Hủy</button>
-            </form>
+            <div class="modal-body">
+                <form id="customerForm">
+                    <input type="hidden" id="customerId">
+                    
+                    <div class="form-group">
+                        <label class="form-label form-label-required">Tên khách hàng</label>
+                        <input type="text" class="form-input" id="customerName" required placeholder="VD: Nguyễn Văn A">
+                    </div>
+                    
+                    <div class="form-group">
+                        <label class="form-label form-label-required">Số điện thoại</label>
+                        <input type="tel" class="form-input" id="customerPhone" required placeholder="VD: 0909123456">
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Lưu
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeCustomerModal()">
+                        <i class="fas fa-times"></i>
+                        Hủy
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
+    <!-- Card Modal -->
     <div id="cardModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title" id="cardModalTitle">Thêm thẻ</div>
-                <button class="status-bar-action" onclick="closeCardModal()">Đóng</button>
+                <button class="close-btn" onclick="closeCardModal()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <form id="cardForm">
-                <input type="hidden" id="cardCustomerId">
-                <input type="hidden" id="cardId">
-                
-                <div class="form-group">
-                    <label class="form-label">Ngân hàng</label>
-                    <select class="form-select" id="bankSelect" required></select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Hạn mức thẻ (VNĐ)</label>
-                    <input type="number" class="form-input" id="creditLimit" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Số dư hiện tại (VNĐ)</label>
-                    <input type="number" class="form-input" id="currentBalance" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Ngày sao kê</label>
-                    <select class="form-select" id="statementDay" required></select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Ngày thanh toán</label>
-                    <select class="form-select" id="paymentDay" required></select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Số tiền nạp (VNĐ)</label>
-                    <input type="number" class="form-input" id="depositAmount" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Số tiền rút (VNĐ)</label>
-                    <input type="number" class="form-input" id="withdrawAmount" required>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Phí đáo hạn (%)</label>
-                    <input type="number" class="form-input" id="feePercent" required step="0.1">
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Tính phí trên</label>
-                    <select class="form-select" id="feeCalculation" required>
-                        <option value="withdraw">Rút</option>
-                        <option value="deposit">Nạp</option>
-                    </select>
-                </div>
-
-                <div class="form-group">
-                    <label class="form-label">Phụ thu phí (VNĐ)</label>
-                    <input type="number" class="form-input" id="additionalFee" placeholder="Số dương: thu thêm, Số âm: giảm">
-                </div>
-
-                <div class="form-group" style="border-top: 1px solid var(--border); padding-top: 12px; margin-top: 12px;">
-                    <label class="form-label" style="display: flex; align-items: center; gap: 8px;">
-                        <input type="checkbox" id="isMultiMonth" onchange="toggleMultiMonth()" style="width: auto;">
-                        <span>📅 Đáo nhiều tháng</span>
-                    </label>
-                </div>
-
-                <div id="multiMonthSection" style="display: none;">
+            <div class="modal-body">
+                <form id="cardForm">
+                    <input type="hidden" id="cardCustomerId">
+                    <input type="hidden" id="cardId">
+                    
                     <div class="form-group">
-                        <label class="form-label">Số tháng đáo</label>
-                        <input type="number" class="form-input" id="monthCount" min="2" max="12" value="2">
+                        <label class="form-label form-label-required">Ngân hàng</label>
+                        <select class="form-select" id="bankSelect" required></select>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Hạn mức (VNĐ)</label>
+                            <input type="text" class="form-input money-input" id="creditLimit" required placeholder="50,000,000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Số dư (VNĐ)</label>
+                            <input type="text" class="form-input money-input" id="currentBalance" required placeholder="30,000,000">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Ngày sao kê</label>
+                            <select class="form-select" id="statementDay" required></select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Ngày thanh toán</label>
+                            <select class="form-select" id="paymentDay" required></select>
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Tiền nạp (VNĐ)</label>
+                            <input type="text" class="form-input money-input" id="depositAmount" required placeholder="40,000,000">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Tiền rút (VNĐ)</label>
+                            <input type="text" class="form-input money-input" id="withdrawAmount" required placeholder="50,000,000">
+                        </div>
+                    </div>
+
+                    <div class="form-row">
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Phí đáo (%)</label>
+                            <input type="number" class="form-input" id="feePercent" required min="0" max="100" step="0.1" placeholder="2.0">
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label form-label-required">Tính phí trên</label>
+                            <select class="form-select" id="feeCalculation" required>
+                                <option value="withdraw">Tiền rút</option>
+                                <option value="deposit">Tiền nạp</option>
+                            </select>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Chi tiết từng tháng</label>
-                        <div id="monthlyAmounts" style="background: var(--bg); padding: 10px; border-radius: 10px;"></div>
+                        <label class="form-label">Phụ thu phí (VNĐ)</label>
+                        <input type="text" class="form-input money-input" id="additionalFee" placeholder="100,000 hoặc -50,000">
+                        <div class="form-hint">Số dương: thu thêm | Số âm: giảm trừ | Để trống: không phụ thu</div>
+                    </div>
+
+                    <div class="form-group" style="border-top: 1.5px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                        <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
+                            <input type="checkbox" id="isMultiMonth" onchange="toggleMultiMonth()" style="width: auto; cursor: pointer;">
+                            <span>📅 Đáo hạn nhiều tháng</span>
+                        </label>
+                        <div class="form-hint">Để tiền trong thẻ qua nhiều kỳ thanh toán</div>
+                    </div>
+
+                    <div id="multiMonthSection" style="display: none;">
+                        <div class="form-group">
+                            <label class="form-label">Số tháng đáo</label>
+                            <input type="number" class="form-input" id="monthCount" min="2" max="12" value="2" placeholder="VD: 3 tháng">
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Chi tiết từng tháng</label>
+                            <div id="monthlyAmounts" style="background: var(--bg); padding: 12px; border-radius: 12px;"></div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="form-label">Tổng phí dự tính</label>
+                            <div id="totalMultiMonthFee" style="background: rgba(255, 77, 79, 0.1); padding: 12px; border-radius: 12px; font-weight: 600; color: var(--danger); min-height: 40px;"></div>
+                        </div>
                     </div>
 
                     <div class="form-group">
-                        <label class="form-label">Tổng phí dự tính</label>
-                        <div id="totalMultiMonthFee" style="background: rgba(229, 57, 53, 0.1); padding: 10px; border-radius: 10px; font-weight: 600; color: var(--danger);"></div>
+                        <label class="form-label form-label-required">Trạng thái</label>
+                        <select class="form-select" id="cardStatus" required>
+                            <option value="processing">Chưa hoàn thành</option>
+                            <option value="completed">Đã hoàn thành</option>
+                            <option value="no-contact">Không liên hệ</option>
+                        </select>
                     </div>
-                </div>
 
-                <div class="form-group">
-                    <label class="form-label">Trạng thái</label>
-                    <select class="form-select" id="cardStatus" required>
-                        <option value="processing">Chưa hoàn thành</option>
-                        <option value="completed">Đã hoàn thành</option>
-                        <option value="no-contact">Không liên hệ</option>
-                    </select>
-                </div>
+                    <div class="form-group">
+                        <label class="form-label">Ghi chú</label>
+                        <textarea class="form-textarea" id="cardNotes" placeholder="Ghi chú thêm..."></textarea>
+                    </div>
 
-                <div class="form-group">
-                    <label class="form-label">Ghi chú</label>
-                    <input type="text" class="form-input" id="cardNotes">
-                </div>
-
-                <button type="submit" class="btn btn-primary">Lưu</button>
-                <button type="button" class="btn btn-secondary" onclick="closeCardModal()">Hủy</button>
-            </form>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Lưu
+                    </button>
+                    <button type="button" class="btn btn-secondary" onclick="closeCardModal()">
+                        <i class="fas fa-times"></i>
+                        Hủy
+                    </button>
+                </form>
+            </div>
         </div>
     </div>
 
+    <!-- Settings Modal -->
     <div id="settingsModal" class="modal">
         <div class="modal-content">
             <div class="modal-header">
                 <div class="modal-title">Cài đặt</div>
-                <button class="status-bar-action" onclick="closeSettings()">Đóng</button>
+                <button class="close-btn" onclick="closeSettings()">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            
-            <div class="form-group">
-                <label class="form-label">Mật khẩu mới</label>
-                <input type="password" class="form-input" id="newPassword">
+            <div class="modal-body">
+                <div class="form-group">
+                    <label class="form-label">Mật khẩu mới</label>
+                    <input type="password" class="form-input" id="newPassword" placeholder="Nhập mật khẩu mới">
+                </div>
+                
+                <div class="form-group">
+                    <label class="form-label">Xác nhận mật khẩu</label>
+                    <input type="password" class="form-input" id="confirmPassword" placeholder="Nhập lại mật khẩu">
+                </div>
+                
+                <button class="btn btn-primary" onclick="changePassword()">
+                    <i class="fas fa-key"></i>
+                    Đổi mật khẩu
+                </button>
+                
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1.5px solid var(--border);">
+                    <h3 style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">📦 Đồng bộ dữ liệu</h3>
+                    <button class="btn btn-secondary" onclick="exportData()">
+                        <i class="fas fa-file-export"></i>
+                        Xuất JSON
+                    </button>
+                    <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+                        <i class="fas fa-file-import"></i>
+                        Nhập JSON
+                    </button>
+                    <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
+                    <div class="form-hint" style="text-align: center;">
+                        Xuất dữ liệu để backup hoặc chuyển sang thiết bị khác
+                    </div>
+                </div>
+                
+                <button class="btn btn-danger" onclick="logout()">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Đăng xuất
+                </button>
             </div>
-            
-            <div class="form-group">
-                <label class="form-label">Xác nhận mật khẩu</label>
-                <input type="password" class="form-input" id="confirmPassword">
-            </div>
-            
-            <button class="btn btn-primary" onclick="changePassword()">Đổi mật khẩu</button>
-            
-            <div style="margin-top: 16px; padding-top: 16px; border-top: 1px solid var(--border);">
-                <div style="margin-bottom: 12px; font-weight: 600;">📦 Đồng bộ dữ liệu</div>
-                <button class="btn btn-secondary" onclick="exportData()">📤 Xuất dữ liệu JSON</button>
-                <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">📥 Nhập dữ liệu JSON</button>
-                <input type="file" id="importFile" accept=".json" style="display: none;" onchange="importData(event)">
-                <p style="font-size: 12px; color: var(--text-secondary); margin-top: 8px; text-align: center;">
-                    Xuất dữ liệu để backup hoặc chuyển sang thiết bị khác
-                </p>
-            </div>
-            
-            <button class="btn btn-danger" onclick="logout()">Đăng xuất</button>
         </div>
     </div>
 
     <script>
+        // Complete bank list - 65+ banks matching desktop
         const BANKS = [
+            // Ngân hàng thương mại
             { id: 'vcb', name: 'VCB (Vietcombank)' },
             { id: 'tcb', name: 'TCB (Techcombank)' },
             { id: 'bidv', name: 'BIDV' },
@@ -807,423 +1076,297 @@
             { id: 'hdb', name: 'HDB (HDBank)' },
             { id: 'ocb', name: 'OCB' },
             { id: 'seabank', name: 'SeABank' },
+            { id: 'abbank', name: 'ABBank' },
+            { id: 'vab', name: 'VAB (VietABank)' },
+            { id: 'ncb', name: 'NCB (Nam A Bank)' },
+            { id: 'bvb', name: 'BVB (BaoViet Bank)' },
             { id: 'agribank', name: 'Agribank' },
+            { id: 'eib', name: 'EIB (Eximbank)' },
+            { id: 'lpb', name: 'LPB (LienVietPostBank)' },
+            { id: 'pvcombank', name: 'PVcomBank' },
+            { id: 'vietbank', name: 'VietBank' },
+            { id: 'oceanbank', name: 'OceanBank' },
+            { id: 'gpbank', name: 'GPBank' },
+            { id: 'pgbank', name: 'PGBank (KienLongBank)' },
+            { id: 'klb', name: 'KLB (KienLong Bank)' },
+            { id: 'dongabank', name: 'DongA Bank' },
+            { id: 'namabank', name: 'Nam A Bank' },
+            { id: 'bacabank', name: 'Bac A Bank' },
+            { id: 'woori', name: 'Woori Bank VN' },
+            { id: 'shinhan', name: 'Shinhan Bank VN' },
+            { id: 'publicbank', name: 'Public Bank VN' },
+            { id: 'hongleong', name: 'Hong Leong Bank' },
+            { id: 'indovina', name: 'Indovina Bank' },
+            { id: 'cbbank', name: 'CB Bank' },
+            { id: 'coopbank', name: 'Co-op Bank' },
+            
+            // Ngân hàng số
+            { id: 'timo', name: 'Timo Digital Bank' },
+            { id: 'cake', name: 'CAKE by VPBank' },
+            { id: 'ubank', name: 'Ubank by VPBank' },
+            { id: 'liobank', name: 'Liobank' },
+            
+            // Công ty tài chính
             { id: 'fecredit', name: 'FE Credit' },
-            { id: 'homecredit', name: 'Home Credit' },
-            { id: 'mcredit', name: 'MCredit' }
+            { id: 'homecredit', name: 'Home Credit VN' },
+            { id: 'mcredit', name: 'MCredit' },
+            { id: 'hdsaison', name: 'HD Saison' },
+            { id: 'jaccs', name: 'JACCS' },
+            { id: 'easycredit', name: 'Easy Credit' },
+            { id: 'vfinance', name: 'VFinance' },
+            { id: 'shbfinance', name: 'SHB Finance' },
+            { id: 'pvfinance', name: 'PV Finance' },
+            { id: 'miraeasset', name: 'Mirae Asset' },
+            { id: 'uobfinance', name: 'UOB Finance' },
+            { id: 'vietcredit', name: 'Viet Credit' },
+            { id: 'tpbfinance', name: 'TPB Finance' },
+            { id: 'kredivo', name: 'Kredivo' },
+            { id: 'atome', name: 'Atome' },
+            { id: 'fundiin', name: 'Fundiin' },
+            
+            // Ví điện tử
+            { id: 'momo', name: 'MoMo' },
+            { id: 'zalopay', name: 'ZaloPay' },
+            { id: 'vnpay', name: 'VNPAY' },
+            { id: 'viettelmoney', name: 'Viettel Money' },
+            { id: 'mobifonemoney', name: 'MobiFone Money' }
         ];
 
         let currentUser = null;
         let customers = [];
-        let currentTab = 'processing';
+        let currentTab = 'all';
         let currentCustomerId = null;
         let currentCardId = null;
         let editingCustomerId = null;
         let editingCardId = null;
 
-        function init() {
-            loadBankOptions();
-            loadDayOptions();
-            checkAuth();
-            setupEventListeners();
+        // Theme Management
+        function toggleTheme() {
+            const html = document.documentElement;
+            const currentTheme = html.getAttribute('data-theme');
+            const newTheme = currentTheme === 'dark' ? 'light' : 'dark';
+            html.setAttribute('data-theme', newTheme);
+            localStorage.setItem('theme', newTheme);
+            
+            const icon = document.getElementById('themeIcon');
+            icon.className = newTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
+            
+            showToast(newTheme === 'dark' ? '🌙 Chế độ tối' : '☀️ Chế độ sáng');
         }
 
-        function loadBankOptions() {
-            const select = document.getElementById('bankSelect');
-            BANKS.forEach(b => select.add(new Option(b.name, b.id)));
-        }
-
-        function loadDayOptions() {
-            const s = document.getElementById('statementDay');
-            const p = document.getElementById('paymentDay');
-            for (let i = 1; i <= 31; i++) {
-                s.add(new Option(`Ngày ${i}`, i));
-                p.add(new Option(`Ngày ${i}`, i));
+        function loadTheme() {
+            const savedTheme = localStorage.getItem('theme') || 'light';
+            document.documentElement.setAttribute('data-theme', savedTheme);
+            const icon = document.getElementById('themeIcon');
+            if (icon) {
+                icon.className = savedTheme === 'dark' ? 'fas fa-sun' : 'fas fa-moon';
             }
         }
 
-        function checkAuth() {
-            currentUser = localStorage.getItem('l4cc_user');
-            if (currentUser) {
-                loadUserData();
-                showMainApp();
+        // Authentication
+        function login() {
+            const password = document.getElementById('loginPassword').value;
+            if (!password) {
+                showToast('⚠️ Vui lòng nhập mật khẩu');
+                return;
+            }
+            
+            const userHash = btoa(password);
+            currentUser = userHash;
+            localStorage.setItem('l4cc_user', userHash);
+            loadUserData();
+            showMainApp();
+            showToast('✅ Đăng nhập thành công!');
+        }
+
+        function logout() {
+            if (confirm('Bạn có chắc muốn đăng xuất?')) {
+                localStorage.removeItem('l4cc_user');
+                location.reload();
             }
         }
 
         function showMainApp() {
-            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('authScreen').style.display = 'none';
             document.getElementById('mainApp').style.display = 'block';
-            renderCustomers();
         }
 
-        document.getElementById('loginForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const password = document.getElementById('loginPassword').value;
-            const userHash = btoa(password);
-            const existingData = localStorage.getItem(`l4cc_data_${userHash}`);
-            
-            currentUser = userHash;
-            localStorage.setItem('l4cc_user', userHash);
-            
-            if (!existingData) {
-                customers = [];
-                saveUserData();
-            } else {
-                loadUserData();
-            }
-            
-            showMainApp();
-            showToast('Đăng nhập thành công!');
-        });
-
+        // Data Management
         function loadUserData() {
             const data = localStorage.getItem(`l4cc_data_${currentUser}`);
             customers = data ? JSON.parse(data) : [];
+            renderCustomers();
         }
 
         function saveUserData() {
             localStorage.setItem(`l4cc_data_${currentUser}`, JSON.stringify(customers));
         }
 
-        function formatMoney(amount) {
-            return new Intl.NumberFormat('vi-VN').format(amount) + '₫';
+        // Tab Switching
+        function switchTab(tab) {
+            currentTab = tab;
+            document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+            document.querySelector(`[data-tab="${tab}"]`).classList.add('active');
+            renderCustomers();
         }
 
-        function calculateFee(feePercent, feeCalculation, depositAmount, withdrawAmount, additionalFee = 0) {
-            const baseAmount = feeCalculation === 'withdraw' ? withdrawAmount : depositAmount;
-            const baseFee = Math.round(baseAmount * feePercent / 100);
-            return baseFee + (additionalFee || 0);
+        // Money Input Formatting
+        function setupMoneyInputs() {
+            document.querySelectorAll('.money-input').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    formatMoneyInput(e.target);
+                });
+                input.addEventListener('blur', function(e) {
+                    formatMoneyInput(e.target);
+                });
+            });
         }
 
-        function calculateFinalResult(deposit, withdraw, fee) {
-            return withdraw - deposit - fee;
-        }
-
-        function formatResult(result) {
-            if (result > 0) {
-                return { text: `Khách dư ${formatMoney(result)}`, class: 'negative' };
-            } else if (result < 0) {
-                return { text: `Anh dư ${formatMoney(Math.abs(result))}`, class: 'positive' };
-            } else {
-                return { text: 'Hòa vốn', class: '' };
+        function formatMoneyInput(input) {
+            let value = input.value.replace(/[^0-9-]/g, '');
+            if (value === '' || value === '-') return;
+            
+            let isNegative = value.startsWith('-');
+            let numValue = value.replace('-', '');
+            
+            if (numValue) {
+                let formatted = parseInt(numValue).toLocaleString('en-US');
+                input.value = isNegative ? '-' + formatted : formatted;
             }
         }
 
+        function parseMoneyInput(value) {
+            if (!value) return 0;
+            return parseInt(value.replace(/[^0-9-]/g, '')) || 0;
+        }
+
+        // Format utilities
+        function formatMoney(num) {
+            return new Intl.NumberFormat('vi-VN').format(num) + '₫';
+        }
+
         function getBankInfo(bankId) {
-            return BANKS.find(b => b.id === bankId) || { name: 'Unknown' };
+            return BANKS.find(b => b.id === bankId) || { id: bankId, name: bankId };
         }
 
         function getDaysUntilPayment(paymentDay) {
             const today = new Date();
-            today.setHours(0, 0, 0, 0);
+            const currentDay = today.getDate();
             const currentMonth = today.getMonth();
             const currentYear = today.getFullYear();
+            
             let paymentDate = new Date(currentYear, currentMonth, paymentDay);
-            if (today.getDate() > paymentDay) {
-                paymentDate.setMonth(paymentDate.getMonth() + 1);
+            if (currentDay > paymentDay) {
+                paymentDate = new Date(currentYear, currentMonth + 1, paymentDay);
             }
-            paymentDate.setHours(0, 0, 0, 0);
-            return Math.ceil((paymentDate - today) / (1000 * 60 * 60 * 24));
-        }
-
-        function renderCustomers() {
-            const container = document.getElementById('customerList');
-            const searchText = document.getElementById('searchInput').value.toLowerCase();
             
-            let filteredCustomers = customers.filter(customer => {
-                const matchSearch = !searchText || 
-                    customer.name.toLowerCase().includes(searchText) || 
-                    customer.phone.includes(searchText);
-                if (!matchSearch) return false;
-                if (!customer.cards || customer.cards.length === 0) return true;
-                return customer.cards.some(card => card.status === currentTab);
-            });
-
-            const processingCount = customers.reduce((count, c) => 
-                count + (c.cards ? c.cards.filter(card => card.status === 'processing').length : 0), 0);
-            const completedCount = customers.reduce((count, c) => 
-                count + (c.cards ? c.cards.filter(card => card.status === 'completed').length : 0), 0);
-            const noContactCount = customers.reduce((count, c) => 
-                count + (c.cards ? c.cards.filter(card => card.status === 'no-contact').length : 0), 0);
-
-            document.getElementById('processingBadge').textContent = processingCount;
-            document.getElementById('completedBadge').textContent = completedCount;
-            document.getElementById('noContactBadge').textContent = noContactCount;
-
-            if (filteredCustomers.length === 0) {
-                container.innerHTML = '<div class="empty-state"><div class="empty-icon">📭</div><div>Không có khách hàng</div></div>';
-                return;
-            }
-
-            container.innerHTML = filteredCustomers.map(customer => {
-                const cardsWithStatus = customer.cards ? customer.cards.filter(c => c.status === currentTab) : [];
-                const totalCards = customer.cards ? customer.cards.length : 0;
-                const upcomingCards = cardsWithStatus.filter(c => getDaysUntilPayment(c.paymentDay) <= 5).length;
-
-                return `
-                    <div class="card" onclick="showCardList('${customer.id}')">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">${customer.name}</div>
-                                <div class="card-subtitle">📞 ${customer.phone}</div>
-                            </div>
-                        </div>
-                        <div class="card-badges">
-                            <span class="badge primary">💳 ${totalCards} thẻ</span>
-                            ${upcomingCards > 0 ? `<span class="badge danger">🔔 ${upcomingCards} nhắc</span>` : ''}
-                        </div>
-                        <div class="action-buttons">
-                            <button class="action-btn edit" onclick="event.stopPropagation(); editCustomer('${customer.id}')">✏️ Sửa</button>
-                            <button class="action-btn delete" onclick="event.stopPropagation(); deleteCustomer('${customer.id}')">🗑️ Xóa</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
+            const diffTime = paymentDate - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
         }
 
-        function showCardList(customerId) {
-            currentCustomerId = customerId;
-            const customer = customers.find(c => c.id === customerId);
-            if (!customer) return;
-
-            document.getElementById('cardListTitle').textContent = customer.name;
-            document.getElementById('cardListPage').classList.add('active');
-            
-            renderCustomerSummary(customer);
-            renderCards(customer);
+        function calculateFee(feePercent, feeCalculation, depositAmount, withdrawAmount, additionalFee) {
+            const baseFee = Math.round((feeCalculation === 'withdraw' ? withdrawAmount : depositAmount) * feePercent / 100);
+            return baseFee + (additionalFee || 0);
         }
 
-        function renderCustomerSummary(customer) {
-            const container = document.getElementById('customerSummary');
-            if (!customer.cards || customer.cards.length === 0) {
-                container.innerHTML = '<div style="grid-column: span 2; text-align: center; color: var(--text-secondary);">Chưa có thẻ</div>';
-                return;
-            }
-
-            let totalCreditLimit = 0;
-            let totalCurrentBalance = 0;
-            let totalDeposit = 0;
-            let totalWithdraw = 0;
-            let totalFee = 0;
-
-            customer.cards.forEach(card => {
-                totalCreditLimit += card.creditLimit;
-                totalCurrentBalance += card.currentBalance;
-                totalDeposit += card.depositAmount;
-                totalWithdraw += card.withdrawAmount;
-                
-                // Tính phí đúng (multi-month hoặc thường)
-                if (card.multiMonth && card.multiMonth.enabled) {
-                    totalFee += card.multiMonth.totalFee;
-                } else {
-                    totalFee += calculateFee(card.feePercent, card.feeCalculation, card.depositAmount, card.withdrawAmount, card.additionalFee);
-                }
-            });
-
-            const totalAvailable = totalCreditLimit - totalCurrentBalance;
-            const finalResult = calculateFinalResult(totalDeposit, totalWithdraw, totalFee);
-            const resultDisplay = formatResult(finalResult);
-
-            container.innerHTML = `
-                <div class="summary-item">
-                    <div class="summary-label">Tổng hạn mức</div>
-                    <div class="summary-value">${formatMoney(totalCreditLimit)}</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-label">Còn trống</div>
-                    <div class="summary-value" style="color: var(--primary)">${formatMoney(totalAvailable)}</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-label">Tổng nạp</div>
-                    <div class="summary-value">${formatMoney(totalDeposit)}</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-label">Tổng rút</div>
-                    <div class="summary-value">${formatMoney(totalWithdraw)}</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-label">Tổng phí</div>
-                    <div class="summary-value">${formatMoney(totalFee)}</div>
-                </div>
-                <div class="summary-item">
-                    <div class="summary-label">Kết quả</div>
-                    <div class="summary-value ${resultDisplay.class}">${resultDisplay.text}</div>
-                </div>
-            `;
+        function calculateFinalResult(depositAmount, withdrawAmount, totalFee) {
+            return withdrawAmount - depositAmount - totalFee;
         }
 
-        function renderCards(customer) {
-            const container = document.getElementById('cardsList');
-            if (!customer.cards || customer.cards.length === 0) {
-                container.innerHTML = `
-                    <div class="empty-state">
-                        <div class="empty-icon">💳</div>
-                        <div>Chưa có thẻ nào</div>
-                    </div>
-                    <div style="padding: 0 16px;">
-                        <button class="btn btn-primary" onclick="showAddCardModal('${customer.id}')">➕ Thêm thẻ mới</button>
-                    </div>
-                `;
-                return;
-            }
-
-            container.innerHTML = `
-                <div style="padding: 0 16px 12px 16px;">
-                    <button class="btn btn-primary" onclick="showAddCardModal('${customer.id}')">➕ Thêm thẻ mới</button>
-                </div>
-            ` + customer.cards.map(card => {
-                const bank = getBankInfo(card.bankId);
-                const daysRemaining = getDaysUntilPayment(card.paymentDay);
-                const isReminder = daysRemaining <= 5 && card.status === 'processing';
-                
-                let statusText = card.status === 'completed' ? '✅ Hoàn thành' : 
-                                card.status === 'no-contact' ? '📵 Không liên hệ' : '⏳ Chưa xong';
-
-                return `
-                    <div class="card" onclick="showCardDetail('${customer.id}', '${card.id}')">
-                        <div class="card-header">
-                            <div>
-                                <div class="card-title">${bank.name}</div>
-                                <div class="card-subtitle">Ngày ${card.paymentDay} • Còn ${daysRemaining} ngày</div>
-                            </div>
-                        </div>
-                        <div class="card-badges">
-                            <span class="badge">${statusText}</span>
-                            ${isReminder ? '<span class="badge danger">🔔 Nhắc</span>' : ''}
-                        </div>
-                        <div class="action-buttons">
-                            <button class="action-btn edit" onclick="event.stopPropagation(); editCard('${customer.id}', '${card.id}')">✏️ Sửa</button>
-                            <button class="action-btn delete" onclick="event.stopPropagation(); deleteCard('${customer.id}', '${card.id}')">🗑️ Xóa</button>
-                        </div>
-                    </div>
-                `;
-            }).join('');
-        }
-
-        function showCardDetail(customerId, cardId) {
-            currentCardId = cardId;
-            const customer = customers.find(c => c.id === customerId);
-            if (!customer) return;
-            const card = customer.cards.find(c => c.id === cardId);
-            if (!card) return;
-
-            const bank = getBankInfo(card.bankId);
-            
-            // Tính phí
-            let totalFee = 0;
-            let feeSection = '';
-            
-            if (card.multiMonth && card.multiMonth.enabled) {
-                // Đáo nhiều tháng
-                totalFee = card.multiMonth.totalFee;
-                feeSection = `
-                    <div class="info-row" style="background: rgba(124, 179, 66, 0.05);">
-                        <div class="info-label"><strong>📅 Đáo ${card.multiMonth.monthCount} tháng</strong></div>
-                    </div>
-                    ${card.multiMonth.monthlyAmounts.map(item => `
-                        <div class="info-row">
-                            <div class="info-label">Tháng ${item.month}: ${formatMoney(item.amount)}</div>
-                            <div class="info-value">${formatMoney(item.fee)}</div>
-                        </div>
-                    `).join('')}
-                `;
+        function formatResult(result) {
+            if (result > 0) {
+                return { text: `Anh dư khách ${formatMoney(result)}`, class: 'negative', icon: '💸' };
+            } else if (result < 0) {
+                return { text: `Khách dư anh ${formatMoney(Math.abs(result))}`, class: 'positive', icon: '💰' };
             } else {
-                // Đáo thường
-                const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
-                const additionalFee = card.additionalFee || 0;
-                totalFee = baseFee + additionalFee;
-                
-                feeSection = `
-                    <div class="info-row">
-                        <div class="info-label">Phí cơ bản</div>
-                        <div class="info-value">${formatMoney(baseFee)}</div>
-                    </div>
-                    ${additionalFee !== 0 ? `
-                    <div class="info-row">
-                        <div class="info-label">Phụ thu</div>
-                        <div class="info-value ${additionalFee > 0 ? 'negative' : 'positive'}">${additionalFee > 0 ? '+' : ''}${formatMoney(additionalFee)}</div>
-                    </div>
-                    ` : ''}
-                `;
+                return { text: 'Hòa vốn', class: '', icon: '⚖️' };
             }
+        }
+
+        // Render Customers
+        function renderCustomers() {
+            const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+            const grid = document.getElementById('customersGrid');
             
-            const finalResult = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
-            const resultDisplay = formatResult(finalResult);
-            const daysRemaining = getDaysUntilPayment(card.paymentDay);
-            const availableBalance = card.creditLimit - card.currentBalance;
+            let filtered = customers.filter(c => {
+                const matchSearch = c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm);
+                if (currentTab === 'all') return matchSearch;
+                
+                const hasStatus = c.cards && c.cards.some(card => {
+                    if (currentTab === 'processing') return card.status === 'processing';
+                    if (currentTab === 'completed') return card.status === 'completed';
+                    return false;
+                });
+                return matchSearch && hasStatus;
+            });
 
-            document.getElementById('cardDetailContent').innerHTML = `
-                <div class="info-section">
-                    <div class="info-row">
-                        <div class="info-label">Ngân hàng</div>
-                        <div class="info-value">${bank.name}</div>
+            if (filtered.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📭</div>
+                        <div class="empty-text">Chưa có khách hàng</div>
+                        <div class="form-hint">Nhấn nút + để thêm khách hàng mới</div>
                     </div>
-                    <div class="info-row">
-                        <div class="info-label">Hạn mức</div>
-                        <div class="info-value">${formatMoney(card.creditLimit)}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Số dư</div>
-                        <div class="info-value">${formatMoney(card.currentBalance)}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Còn trống</div>
-                        <div class="info-value positive">${formatMoney(availableBalance)}</div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label">Ngày thanh toán</div>
-                        <div class="info-value">Ngày ${card.paymentDay} (${daysRemaining} ngày)</div>
-                    </div>
-                </div>
+                `;
+                return;
+            }
 
-                <div class="info-section">
-                    <div class="info-row">
-                        <div class="info-label">Tiền nạp</div>
-                        <div class="info-value">${formatMoney(card.depositAmount)}</div>
+            grid.innerHTML = filtered.map(customer => {
+                const cardCount = customer.cards ? customer.cards.length : 0;
+                let totalDeposit = 0, totalWithdraw = 0, totalFee = 0;
+                
+                if (customer.cards) {
+                    customer.cards.forEach(card => {
+                        totalDeposit += card.depositAmount || 0;
+                        totalWithdraw += card.withdrawAmount || 0;
+                        if (card.multiMonth && card.multiMonth.enabled) {
+                            totalFee += card.multiMonth.totalFee;
+                        } else {
+                            const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                            totalFee += baseFee + (card.additionalFee || 0);
+                        }
+                    });
+                }
+                
+                const result = totalWithdraw - totalDeposit - totalFee;
+                const resultClass = result > 0 ? 'negative' : result < 0 ? 'positive' : '';
+                
+                return `
+                    <div class="customer-card" onclick="viewCustomer('${customer.id}')">
+                        <div class="customer-header">
+                            <div class="customer-info">
+                                <div class="customer-name">${customer.name}</div>
+                                <div class="customer-phone">
+                                    <i class="fas fa-phone"></i>
+                                    ${customer.phone}
+                                </div>
+                            </div>
+                            <div class="customer-actions" onclick="event.stopPropagation()">
+                                <button class="icon-btn edit" onclick="editCustomer('${customer.id}')" title="Sửa">
+                                    <i class="fas fa-pen"></i>
+                                </button>
+                                <button class="icon-btn delete" onclick="deleteCustomer('${customer.id}')" title="Xóa">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                        <div class="customer-stats">
+                            <div class="stat-item">
+                                <div class="stat-label">Số thẻ</div>
+                                <div class="stat-value">${cardCount}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Kết quả</div>
+                                <div class="stat-value ${resultClass}">${result === 0 ? 'Hòa' : formatMoney(Math.abs(result))}</div>
+                            </div>
+                        </div>
                     </div>
-                    <div class="info-row">
-                        <div class="info-label">Tiền rút</div>
-                        <div class="info-value">${formatMoney(card.withdrawAmount)}</div>
-                    </div>
-                    ${feeSection}
-                    <div class="info-row" style="background: rgba(124, 179, 66, 0.1);">
-                        <div class="info-label"><strong>Tổng phí</strong></div>
-                        <div class="info-value"><strong>${formatMoney(totalFee)}</strong></div>
-                    </div>
-                    <div class="info-row">
-                        <div class="info-label"><strong>Kết quả</strong></div>
-                        <div class="info-value ${resultDisplay.class}"><strong>${resultDisplay.text}</strong></div>
-                    </div>
-                </div>
-
-                ${card.notes ? `
-                <div class="info-section">
-                    <div class="info-row">
-                        <div class="info-label">📝 Ghi chú</div>
-                    </div>
-                    <div style="margin-top: 8px; color: var(--text-secondary);">${card.notes}</div>
-                </div>
-                ` : ''}
-
-                <div style="padding: 0 16px;">
-                    <button class="btn btn-primary" onclick="editCard('${customerId}', '${cardId}')">✏️ Chỉnh sửa</button>
-                    <button class="btn btn-danger" onclick="deleteCard('${customerId}', '${cardId}')">🗑️ Xóa thẻ</button>
-                </div>
-            `;
-
-            document.getElementById('cardDetailPage').classList.add('active');
+                `;
+            }).join('');
         }
 
-        function goBackToCustomers() {
-            document.getElementById('cardListPage').classList.remove('active');
-            currentCustomerId = null;
-        }
-
-        function goBackToCardList() {
-            document.getElementById('cardDetailPage').classList.remove('active');
-            currentCardId = null;
-        }
-
+        // Customer CRUD
         function showAddCustomerModal() {
             editingCustomerId = null;
             document.getElementById('customerModalTitle').textContent = 'Thêm khách hàng';
@@ -1239,6 +1382,7 @@
         function editCustomer(id) {
             const customer = customers.find(c => c.id === id);
             if (!customer) return;
+            
             editingCustomerId = id;
             document.getElementById('customerModalTitle').textContent = 'Sửa khách hàng';
             document.getElementById('customerId').value = id;
@@ -1248,49 +1392,389 @@
         }
 
         function deleteCustomer(id) {
-            const customer = customers.find(c => c.id === id);
-            if (!customer) return;
-            if (!confirm(`Xóa "${customer.name}" và tất cả thẻ?`)) return;
+            if (!confirm('Xóa khách hàng này và tất cả thẻ của họ?')) return;
             customers = customers.filter(c => c.id !== id);
             saveUserData();
             renderCustomers();
-            showToast('Đã xóa!');
+            showToast('✅ Đã xóa khách hàng!');
+        }
+
+        function viewCustomer(id) {
+            currentCustomerId = id;
+            const customer = customers.find(c => c.id === id);
+            if (!customer) return;
+            
+            renderCustomerSummary(customer);
+            renderCards(customer);
+            
+            document.getElementById('customersPage').classList.remove('active');
+            document.getElementById('cardListPage').classList.add('active');
+        }
+
+        function goBackToCustomers() {
+            document.getElementById('cardListPage').classList.remove('active');
+            document.getElementById('customersPage').classList.add('active');
+            currentCustomerId = null;
         }
 
         document.getElementById('customerForm').addEventListener('submit', function(e) {
             e.preventDefault();
-            const customerData = {
-                id: editingCustomerId || Date.now().toString(),
-                name: document.getElementById('customerName').value,
-                phone: document.getElementById('customerPhone').value,
-                cards: editingCustomerId ? customers.find(c => c.id === editingCustomerId).cards : [],
-                createdAt: new Date().toISOString()
-            };
+            const id = editingCustomerId || Date.now().toString();
+            const name = document.getElementById('customerName').value;
+            const phone = document.getElementById('customerPhone').value;
             
             if (editingCustomerId) {
-                const index = customers.findIndex(c => c.id === editingCustomerId);
-                customers[index] = customerData;
+                const customer = customers.find(c => c.id === editingCustomerId);
+                customer.name = name;
+                customer.phone = phone;
             } else {
-                customers.push(customerData);
+                customers.push({ id, name, phone, cards: [] });
             }
             
             saveUserData();
             closeCustomerModal();
             renderCustomers();
-            showToast('Đã lưu!');
+            showToast('✅ Đã lưu khách hàng!');
         });
 
+        // Render Customer Summary
+        function renderCustomerSummary(customer) {
+            const container = document.getElementById('customerSummary');
+            if (!customer.cards || customer.cards.length === 0) {
+                container.innerHTML = '';
+                return;
+            }
+
+            let totalCreditLimit = 0, totalCurrentBalance = 0;
+            let totalDeposit = 0, totalWithdraw = 0, totalFee = 0;
+
+            customer.cards.forEach(card => {
+                totalCreditLimit += card.creditLimit;
+                totalCurrentBalance += card.currentBalance;
+                totalDeposit += card.depositAmount;
+                totalWithdraw += card.withdrawAmount;
+                
+                if (card.multiMonth && card.multiMonth.enabled) {
+                    totalFee += card.multiMonth.totalFee;
+                } else {
+                    totalFee += calculateFee(card.feePercent, card.feeCalculation, card.depositAmount, card.withdrawAmount, card.additionalFee);
+                }
+            });
+
+            const totalAvailable = totalCreditLimit - totalCurrentBalance;
+            const finalResult = calculateFinalResult(totalDeposit, totalWithdraw, totalFee);
+            const resultDisplay = formatResult(finalResult);
+
+            container.innerHTML = `
+                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
+                        <div>
+                            <div style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">${customer.name}</div>
+                            <div style="opacity: 0.9;">
+                                <i class="fas fa-phone"></i> ${customer.phone}
+                            </div>
+                        </div>
+                        <div style="text-align: right;">
+                            <div style="font-size: 12px; opacity: 0.8;">Tổng thẻ</div>
+                            <div style="font-size: 24px; font-weight: 700;">${customer.cards.length}</div>
+                        </div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.3);">
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Tổng hạn mức</div>
+                            <div style="font-size: 14px; font-weight: 600;">${formatMoney(totalCreditLimit)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Còn trống</div>
+                            <div style="font-size: 14px; font-weight: 600;">${formatMoney(totalAvailable)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Tổng phí</div>
+                            <div style="font-size: 14px; font-weight: 600;">${formatMoney(totalFee)}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Kết quả</div>
+                            <div style="font-size: 14px; font-weight: 600;">${resultDisplay.icon} ${resultDisplay.text}</div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Render Cards
+        function renderCards(customer) {
+            const container = document.getElementById('cardsList');
+            
+            if (!customer.cards || customer.cards.length === 0) {
+                container.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">💳</div>
+                        <div class="empty-text">Chưa có thẻ nào</div>
+                    </div>
+                    <button class="btn btn-primary" onclick="showAddCardModal('${customer.id}')">
+                        <i class="fas fa-plus"></i>
+                        Thêm thẻ mới
+                    </button>
+                `;
+                return;
+            }
+
+            container.innerHTML = `
+                <button class="btn btn-primary" onclick="showAddCardModal('${customer.id}')" style="margin-bottom: 16px;">
+                    <i class="fas fa-plus"></i>
+                    Thêm thẻ mới
+                </button>
+                ${customer.cards.map(card => {
+                    const bank = getBankInfo(card.bankId);
+                    const daysRemaining = getDaysUntilPayment(card.paymentDay);
+                    
+                    let totalFee = 0;
+                    if (card.multiMonth && card.multiMonth.enabled) {
+                        totalFee = card.multiMonth.totalFee;
+                    } else {
+                        totalFee = calculateFee(card.feePercent, card.feeCalculation, card.depositAmount, card.withdrawAmount, card.additionalFee);
+                    }
+                    
+                    const result = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
+                    const resultDisplay = formatResult(result);
+                    
+                    let statusBadge = '';
+                    if (card.status === 'completed') {
+                        statusBadge = '<span style="background: var(--success); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">✓ Hoàn thành</span>';
+                    } else if (card.status === 'processing') {
+                        statusBadge = '<span style="background: var(--warning); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">⏳ Đang xử lý</span>';
+                    } else {
+                        statusBadge = '<span style="background: var(--text-secondary); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">📵 Không liên hệ</span>';
+                    }
+                    
+                    return `
+                        <div class="customer-card" onclick="showCardDetail('${customer.id}', '${card.id}')" style="margin-bottom: 12px;">
+                            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
+                                <div style="flex: 1;">
+                                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">${bank.name}</div>
+                                    <div style="font-size: 13px; color: var(--text-secondary);">
+                                        Ngày ${card.paymentDay} • <span style="color: ${daysRemaining <= 3 ? 'var(--danger)' : 'var(--text)'};">Còn ${daysRemaining} ngày</span>
+                                    </div>
+                                </div>
+                                <div class="customer-actions" onclick="event.stopPropagation()">
+                                    <button class="icon-btn edit" onclick="editCard('${customer.id}', '${card.id}')" title="Sửa">
+                                        <i class="fas fa-pen"></i>
+                                    </button>
+                                    <button class="icon-btn delete" onclick="deleteCard('${customer.id}', '${card.id}')" title="Xóa">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </div>
+                            </div>
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding-top: 12px; border-top: 1px solid var(--border);">
+                                <div class="stat-item">
+                                    <div class="stat-label">Hạn mức</div>
+                                    <div class="stat-value">${formatMoney(card.creditLimit)}</div>
+                                </div>
+                                <div class="stat-item">
+                                    <div class="stat-label">Kết quả</div>
+                                    <div class="stat-value ${resultDisplay.class}">${resultDisplay.icon}</div>
+                                </div>
+                            </div>
+                            <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
+                                ${statusBadge}
+                                ${card.multiMonth && card.multiMonth.enabled ? '<span style="background: rgba(74, 144, 226, 0.1); color: var(--primary); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">📅 ' + card.multiMonth.monthCount + ' tháng</span>' : ''}
+                            </div>
+                        </div>
+                    `;
+                }).join('')}
+            `;
+        }
+
+        // Card Detail
+        function showCardDetail(customerId, cardId) {
+            currentCardId = cardId;
+            const customer = customers.find(c => c.id === customerId);
+            if (!customer) return;
+            const card = customer.cards.find(c => c.id === cardId);
+            if (!card) return;
+
+            const bank = getBankInfo(card.bankId);
+            const daysRemaining = getDaysUntilPayment(card.paymentDay);
+            const availableBalance = card.creditLimit - card.currentBalance;
+            
+            let totalFee = 0;
+            let feeBreakdown = '';
+            
+            if (card.multiMonth && card.multiMonth.enabled) {
+                totalFee = card.multiMonth.totalFee;
+                feeBreakdown = `
+                    <div style="background: rgba(74, 144, 226, 0.1); padding: 12px; border-radius: 12px; margin-bottom: 12px;">
+                        <div style="font-weight: 600; margin-bottom: 8px; color: var(--primary);">📅 Đáo ${card.multiMonth.monthCount} tháng:</div>
+                        ${card.multiMonth.monthlyAmounts.map(item => `
+                            <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 14px;">
+                                <span>Tháng ${item.month}: ${formatMoney(item.amount)} × ${card.feePercent}%</span>
+                                <span style="font-weight: 600;">${formatMoney(item.fee)}</span>
+                            </div>
+                        `).join('')}
+                    </div>
+                `;
+            } else {
+                const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                const additionalFee = card.additionalFee || 0;
+                totalFee = baseFee + additionalFee;
+                
+                feeBreakdown = `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Phí cơ bản (${card.feePercent}% trên ${card.feeCalculation === 'withdraw' ? 'rút' : 'nạp'}):</span>
+                        <span style="font-weight: 600;">${formatMoney(baseFee)}</span>
+                    </div>
+                    ${additionalFee !== 0 ? `
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Phụ thu phí:</span>
+                        <span style="font-weight: 600; color: ${additionalFee > 0 ? 'var(--danger)' : 'var(--success)'};">${additionalFee > 0 ? '+' : ''}${formatMoney(additionalFee)}</span>
+                    </div>
+                    ` : ''}
+                `;
+            }
+            
+            const finalResult = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
+            const resultDisplay = formatResult(finalResult);
+
+            let statusBadge = '';
+            if (card.status === 'completed') {
+                statusBadge = '<span style="background: var(--success); color: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">✓ Đã hoàn thành</span>';
+            } else if (card.status === 'processing') {
+                statusBadge = '<span style="background: var(--warning); color: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">⏳ Chưa hoàn thành</span>';
+            } else {
+                statusBadge = '<span style="background: var(--text-secondary); color: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">📵 Không liên hệ</span>';
+            }
+
+            document.getElementById('cardDetailContent').innerHTML = `
+                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white;">
+                    <div style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">${bank.name}</div>
+                    <div style="opacity: 0.9; margin-bottom: 12px;">
+                        <i class="fas fa-user"></i> ${customer.name} • <i class="fas fa-phone"></i> ${customer.phone}
+                    </div>
+                    <div style="display: flex; gap: 12px;">
+                        ${statusBadge}
+                        ${card.multiMonth && card.multiMonth.enabled ? '<span style="background: rgba(255,255,255,0.2); padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">📅 ' + card.multiMonth.monthCount + ' tháng</span>' : ''}
+                    </div>
+                </div>
+
+                <div class="customer-card" style="margin-bottom: 16px;">
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--primary);">📊 Thông tin thẻ</div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div>
+                            <div class="stat-label">Hạn mức</div>
+                            <div class="stat-value" style="font-size: 16px;">${formatMoney(card.creditLimit)}</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Số dư</div>
+                            <div class="stat-value" style="font-size: 16px;">${formatMoney(card.currentBalance)}</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Còn trống</div>
+                            <div class="stat-value positive" style="font-size: 16px;">${formatMoney(availableBalance)}</div>
+                        </div>
+                        <div>
+                            <div class="stat-label">Đến hạn</div>
+                            <div class="stat-value" style="font-size: 16px; color: ${daysRemaining <= 3 ? 'var(--danger)' : 'var(--text)'};">${daysRemaining} ngày</div>
+                        </div>
+                    </div>
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary);">
+                            <span>Ngày sao kê: ${card.statementDay}</span>
+                            <span>Ngày thanh toán: ${card.paymentDay}</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="customer-card" style="margin-bottom: 16px;">
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--primary);">💰 Tính toán phí</div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
+                        <span>Tiền nạp vào:</span>
+                        <span style="font-weight: 600;">${formatMoney(card.depositAmount)}</span>
+                    </div>
+                    <div style="display: flex; justify-content: space-between; margin-bottom: 12px;">
+                        <span>Tiền rút ra:</span>
+                        <span style="font-weight: 600;">${formatMoney(card.withdrawAmount)}</span>
+                    </div>
+                    ${feeBreakdown}
+                    <div style="background: rgba(255, 77, 79, 0.1); padding: 12px; border-radius: 12px; margin-bottom: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-weight: 700;">
+                            <span>TỔNG PHÍ:</span>
+                            <span style="color: var(--danger); font-size: 18px;">${formatMoney(totalFee)}</span>
+                        </div>
+                    </div>
+                    <div style="background: ${resultDisplay.class === 'positive' ? 'rgba(82, 196, 26, 0.1)' : resultDisplay.class === 'negative' ? 'rgba(255, 77, 79, 0.1)' : 'rgba(128, 128, 128, 0.1)'}; padding: 12px; border-radius: 12px;">
+                        <div style="display: flex; justify-content: space-between; font-weight: 700;">
+                            <span>KẾT QUẢ:</span>
+                            <span style="color: ${resultDisplay.class === 'positive' ? 'var(--success)' : resultDisplay.class === 'negative' ? 'var(--danger)' : 'var(--text)'}; font-size: 18px;">${resultDisplay.text}</span>
+                        </div>
+                    </div>
+                </div>
+
+                ${card.notes ? `
+                <div class="customer-card">
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--primary);">📝 Ghi chú</div>
+                    <div style="color: var(--text-secondary); line-height: 1.6;">${card.notes}</div>
+                </div>
+                ` : ''}
+
+                <div style="display: flex; gap: 12px; margin-top: 16px;">
+                    <button class="btn btn-primary" onclick="editCard('${customerId}', '${cardId}')" style="flex: 1;">
+                        <i class="fas fa-pen"></i>
+                        Sửa
+                    </button>
+                    <button class="btn btn-danger" onclick="deleteCard('${customerId}', '${cardId}')" style="flex: 1;">
+                        <i class="fas fa-trash"></i>
+                        Xóa
+                    </button>
+                </div>
+            `;
+
+            document.getElementById('cardListPage').classList.remove('active');
+            document.getElementById('cardDetailPage').classList.add('active');
+        }
+
+        function goBackToCardList() {
+            document.getElementById('cardDetailPage').classList.remove('active');
+            document.getElementById('cardListPage').classList.add('active');
+            currentCardId = null;
+        }
+
+        // Card CRUD
         function showAddCardModal(customerId) {
             currentCustomerId = customerId;
             editingCardId = null;
             document.getElementById('cardModalTitle').textContent = 'Thêm thẻ';
             document.getElementById('cardForm').reset();
             document.getElementById('cardCustomerId').value = customerId;
+            document.getElementById('cardId').value = '';
+            document.getElementById('isMultiMonth').checked = false;
+            document.getElementById('multiMonthSection').style.display = 'none';
+            loadBankOptions();
+            loadDayOptions();
             document.getElementById('cardModal').classList.add('active');
+            setTimeout(setupMoneyInputs, 100);
         }
 
         function closeCardModal() {
             document.getElementById('cardModal').classList.remove('active');
+        }
+
+        function loadBankOptions() {
+            const select = document.getElementById('bankSelect');
+            select.innerHTML = '<option value="">Chọn ngân hàng</option>' + 
+                BANKS.map(bank => `<option value="${bank.id}">${bank.name}</option>`).join('');
+        }
+
+        function loadDayOptions() {
+            const statementSelect = document.getElementById('statementDay');
+            const paymentSelect = document.getElementById('paymentDay');
+            
+            statementSelect.innerHTML = '<option value="">Chọn ngày</option>';
+            paymentSelect.innerHTML = '<option value="">Chọn ngày</option>';
+            
+            for (let i = 1; i <= 31; i++) {
+                statementSelect.innerHTML += `<option value="${i}">Ngày ${i}</option>`;
+                paymentSelect.innerHTML += `<option value="${i}">Ngày ${i}</option>`;
+            }
         }
 
         function editCard(customerId, cardId) {
@@ -1304,16 +1788,20 @@
             document.getElementById('cardModalTitle').textContent = 'Sửa thẻ';
             document.getElementById('cardCustomerId').value = customerId;
             document.getElementById('cardId').value = cardId;
+            
+            loadBankOptions();
+            loadDayOptions();
+            
             document.getElementById('bankSelect').value = card.bankId;
-            document.getElementById('creditLimit').value = card.creditLimit;
-            document.getElementById('currentBalance').value = card.currentBalance;
+            document.getElementById('creditLimit').value = card.creditLimit.toLocaleString('en-US');
+            document.getElementById('currentBalance').value = card.currentBalance.toLocaleString('en-US');
             document.getElementById('statementDay').value = card.statementDay;
             document.getElementById('paymentDay').value = card.paymentDay;
-            document.getElementById('depositAmount').value = card.depositAmount;
-            document.getElementById('withdrawAmount').value = card.withdrawAmount;
+            document.getElementById('depositAmount').value = card.depositAmount.toLocaleString('en-US');
+            document.getElementById('withdrawAmount').value = card.withdrawAmount.toLocaleString('en-US');
             document.getElementById('feePercent').value = card.feePercent;
             document.getElementById('feeCalculation').value = card.feeCalculation;
-            document.getElementById('additionalFee').value = card.additionalFee || '';
+            document.getElementById('additionalFee').value = card.additionalFee ? card.additionalFee.toLocaleString('en-US') : '';
             document.getElementById('cardStatus').value = card.status;
             document.getElementById('cardNotes').value = card.notes || '';
             
@@ -1324,10 +1812,9 @@
                 document.getElementById('monthCount').value = card.multiMonth.monthCount;
                 generateMonthlyInputs();
                 
-                // Fill in monthly amounts
                 card.multiMonth.monthlyAmounts.forEach(item => {
                     const input = document.getElementById(`month${item.month}Amount`);
-                    if (input) input.value = item.amount;
+                    if (input) input.value = item.amount.toLocaleString('en-US');
                 });
                 calculateMultiMonthFee();
             } else {
@@ -1336,6 +1823,7 @@
             }
             
             document.getElementById('cardModal').classList.add('active');
+            setTimeout(setupMoneyInputs, 100);
         }
 
         function deleteCard(customerId, cardId) {
@@ -1351,7 +1839,7 @@
             
             renderCards(customer);
             renderCustomerSummary(customer);
-            showToast('Đã xóa!');
+            showToast('✅ Đã xóa thẻ!');
         }
 
         document.getElementById('cardForm').addEventListener('submit', function(e) {
@@ -1360,9 +1848,7 @@
             const customer = customers.find(c => c.id === customerId);
             if (!customer) return;
             
-            const additionalFeeValue = document.getElementById('additionalFee').value;
-            
-            // Xử lý đáo nhiều tháng
+            // Handle multi-month
             let multiMonthData = null;
             const isMultiMonth = document.getElementById('isMultiMonth').checked;
             
@@ -1372,7 +1858,7 @@
                 let totalMultiMonthFee = 0;
                 
                 for (let i = 1; i <= monthCount; i++) {
-                    const amount = parseInt(document.getElementById(`month${i}Amount`)?.value) || 0;
+                    const amount = parseMoneyInput(document.getElementById(`month${i}Amount`)?.value);
                     if (amount > 0) {
                         const feePercent = parseFloat(document.getElementById('feePercent').value);
                         const fee = Math.round(amount * feePercent / 100);
@@ -1392,19 +1878,19 @@
             const cardData = {
                 id: editingCardId || Date.now().toString(),
                 bankId: document.getElementById('bankSelect').value,
-                creditLimit: parseInt(document.getElementById('creditLimit').value),
-                currentBalance: parseInt(document.getElementById('currentBalance').value),
+                creditLimit: parseMoneyInput(document.getElementById('creditLimit').value),
+                currentBalance: parseMoneyInput(document.getElementById('currentBalance').value),
                 statementDay: parseInt(document.getElementById('statementDay').value),
                 paymentDay: parseInt(document.getElementById('paymentDay').value),
-                depositAmount: parseInt(document.getElementById('depositAmount').value),
-                withdrawAmount: parseInt(document.getElementById('withdrawAmount').value),
+                depositAmount: parseMoneyInput(document.getElementById('depositAmount').value),
+                withdrawAmount: parseMoneyInput(document.getElementById('withdrawAmount').value),
                 feePercent: parseFloat(document.getElementById('feePercent').value),
                 feeCalculation: document.getElementById('feeCalculation').value,
-                additionalFee: additionalFeeValue ? parseInt(additionalFeeValue) : 0,
+                additionalFee: parseMoneyInput(document.getElementById('additionalFee').value),
                 multiMonth: multiMonthData,
                 status: document.getElementById('cardStatus').value,
                 notes: document.getElementById('cardNotes').value,
-                createdAt: new Date().toISOString()
+                createdAt: editingCardId ? customer.cards.find(c => c.id === editingCardId).createdAt : new Date().toISOString()
             };
             
             if (!customer.cards) customer.cards = [];
@@ -1424,165 +1910,10 @@
                 renderCustomerSummary(customer);
             }
             
-            showToast('Đã lưu!');
+            showToast('✅ Đã lưu thẻ!');
         });
 
-        function exportExcel() {
-            if (customers.length === 0) {
-                showToast('Không có dữ liệu!');
-                return;
-            }
-            
-            const exportData = [];
-            customers.forEach(customer => {
-                if (!customer.cards) return;
-                customer.cards.forEach(card => {
-                    const bank = getBankInfo(card.bankId);
-                    const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
-                    const additionalFee = card.additionalFee || 0;
-                    const totalFee = baseFee + additionalFee;
-                    const finalResult = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
-                    const resultDisplay = formatResult(finalResult);
-                    
-                    exportData.push({
-                        'Tên KH': customer.name,
-                        'SĐT': customer.phone,
-                        'Ngân hàng': bank.name,
-                        'Hạn mức': card.creditLimit,
-                        'Số dư': card.currentBalance,
-                        'Còn trống': card.creditLimit - card.currentBalance,
-                        'Ngày TT': `Ngày ${card.paymentDay}`,
-                        'Tiền nạp': card.depositAmount,
-                        'Tiền rút': card.withdrawAmount,
-                        'Phí %': card.feePercent,
-                        'Phí cơ bản': baseFee,
-                        'Phụ thu': additionalFee,
-                        'Tổng phí': totalFee,
-                        'Kết quả': resultDisplay.text,
-                        'Trạng thái': card.status === 'completed' ? 'Hoàn thành' : card.status === 'no-contact' ? 'Không liên hệ' : 'Chưa xong',
-                        'Ghi chú': card.notes || ''
-                    });
-                });
-            });
-            
-            const ws = XLSX.utils.json_to_sheet(exportData);
-            const wb = XLSX.utils.book_new();
-            XLSX.utils.book_append_sheet(wb, ws, 'Danh sách');
-            XLSX.writeFile(wb, `Love4CC_${new Date().toISOString().split('T')[0]}.xlsx`);
-            showToast('Đã xuất Excel!');
-        }
-
-        document.getElementById('settingsBtn').addEventListener('click', function() {
-            document.getElementById('settingsModal').classList.add('active');
-        });
-
-        function closeSettings() {
-            document.getElementById('settingsModal').classList.remove('active');
-        }
-
-        function changePassword() {
-            const newPass = document.getElementById('newPassword').value;
-            const confirmPass = document.getElementById('confirmPassword').value;
-            if (!newPass || !confirmPass) {
-                showToast('Nhập đầy đủ!');
-                return;
-            }
-            if (newPass !== confirmPass) {
-                showToast('Mật khẩu không khớp!');
-                return;
-            }
-            const newUserHash = btoa(newPass);
-            localStorage.setItem(`l4cc_data_${newUserHash}`, JSON.stringify(customers));
-            localStorage.removeItem(`l4cc_data_${currentUser}`);
-            currentUser = newUserHash;
-            localStorage.setItem('l4cc_user', newUserHash);
-            closeSettings();
-            showToast('Đã đổi mật khẩu!');
-        }
-
-        function exportData() {
-            if (customers.length === 0) {
-                showToast('Không có dữ liệu để xuất!');
-                return;
-            }
-            
-            const exportData = {
-                version: '1.0',
-                exportDate: new Date().toISOString(),
-                customersCount: customers.length,
-                data: customers
-            };
-            
-            const dataStr = JSON.stringify(exportData, null, 2);
-            const dataBlob = new Blob([dataStr], { type: 'application/json' });
-            const url = URL.createObjectURL(dataBlob);
-            const link = document.createElement('a');
-            link.href = url;
-            link.download = `love4cc_backup_${new Date().toISOString().split('T')[0]}.json`;
-            document.body.appendChild(link);
-            link.click();
-            document.body.removeChild(link);
-            URL.revokeObjectURL(url);
-            
-            showToast('Đã xuất dữ liệu!');
-        }
-
-        function importData(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-            
-            if (!file.name.endsWith('.json')) {
-                showToast('Vui lòng chọn file JSON!');
-                return;
-            }
-            
-            const reader = new FileReader();
-            reader.onload = function(e) {
-                try {
-                    const importedData = JSON.parse(e.target.result);
-                    
-                    if (!importedData.data || !Array.isArray(importedData.data)) {
-                        showToast('File không đúng định dạng!');
-                        return;
-                    }
-                    
-                    const action = confirm(
-                        `Tìm thấy ${importedData.customersCount} khách hàng.\n\n` +
-                        `Nhấn OK để GHI ĐÈ dữ liệu hiện tại.\n` +
-                        `Nhấn Cancel để HỦY.`
-                    );
-                    
-                    if (action) {
-                        customers = importedData.data;
-                        saveUserData();
-                        renderCustomers();
-                        showToast(`Đã nhập ${importedData.customersCount} KH!`);
-                        closeSettings();
-                    }
-                } catch (error) {
-                    showToast('Lỗi đọc file!');
-                    console.error('Import error:', error);
-                }
-            };
-            reader.readAsText(file);
-            event.target.value = '';
-        }
-
-        function logout() {
-            if (confirm('Đăng xuất?')) {
-                localStorage.removeItem('l4cc_user');
-                location.reload();
-            }
-        }
-
-        function showToast(message) {
-            const toast = document.createElement('div');
-            toast.className = 'toast';
-            toast.textContent = message;
-            document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 2000);
-        }
-
+        // Multi-month functions
         function toggleMultiMonth() {
             const isChecked = document.getElementById('isMultiMonth').checked;
             const section = document.getElementById('multiMonthSection');
@@ -1602,19 +1933,21 @@
             let html = '';
             for (let i = 1; i <= monthCount; i++) {
                 html += `
-                    <div style="margin-bottom: 8px;">
-                        <label style="font-size: 12px; color: var(--text-secondary); display: block; margin-bottom: 3px;">
+                    <div style="margin-bottom: 10px;">
+                        <label style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: 600;">
                             Tháng ${i}:
                         </label>
-                        <input type="number" 
-                               class="form-input monthly-amount" 
+                        <input type="text" 
+                               class="form-input money-input monthly-amount" 
                                id="month${i}Amount" 
-                               placeholder="Số tiền tháng ${i}"
-                               onchange="calculateMultiMonthFee()">
+                               placeholder="VD: 40,000,000"
+                               onchange="calculateMultiMonthFee()"
+                               style="font-size: 15px;">
                     </div>
                 `;
             }
             container.innerHTML = html;
+            setupMoneyInputs();
             calculateMultiMonthFee();
         }
 
@@ -1625,62 +1958,257 @@
             let breakdown = [];
             
             for (let i = 1; i <= monthCount; i++) {
-                const amount = parseInt(document.getElementById(`month${i}Amount`)?.value) || 0;
+                const amount = parseMoneyInput(document.getElementById(`month${i}Amount`)?.value);
                 if (amount > 0) {
                     const monthFee = Math.round(amount * feePercent / 100);
                     totalFee += monthFee;
-                    breakdown.push(`T${i}: ${formatMoney(amount)} × ${feePercent}% = ${formatMoney(monthFee)}`);
+                    breakdown.push(`<div style="display: flex; justify-content: space-between; margin-bottom: 6px; font-size: 14px;">
+                        <span>Tháng ${i}: ${formatMoney(amount)} × ${feePercent}%</span>
+                        <span style="font-weight: 600;">${formatMoney(monthFee)}</span>
+                    </div>`);
                 }
             }
             
             const resultDiv = document.getElementById('totalMultiMonthFee');
             if (totalFee > 0) {
                 resultDiv.innerHTML = `
-                    <div style="font-size: 12px; margin-bottom: 6px;">
-                        ${breakdown.join('<br>')}
+                    <div style="margin-bottom: 10px;">
+                        ${breakdown.join('')}
                     </div>
-                    <div style="border-top: 1px solid var(--danger); padding-top: 6px; margin-top: 6px;">
-                        Tổng: ${formatMoney(totalFee)}
+                    <div style="border-top: 1.5px solid var(--danger); padding-top: 10px; margin-top: 10px; font-size: 16px;">
+                        <strong>Tổng phí ${monthCount} tháng: ${formatMoney(totalFee)}</strong>
                     </div>
                 `;
             } else {
-                resultDiv.innerHTML = 'Nhập số tiền và phí % để xem';
+                resultDiv.innerHTML = '<div style="color: var(--text-secondary); font-size: 14px;">Nhập số tiền từng tháng và phí % để xem dự tính</div>';
             }
         }
 
-        function setupEventListeners() {
-            document.getElementById('searchInput').addEventListener('input', renderCustomers);
-            
-            document.querySelectorAll('.tab').forEach(tab => {
-                tab.addEventListener('click', function() {
-                    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-                    this.classList.add('active');
-                    currentTab = this.dataset.tab;
-                    renderCustomers();
-                });
-            });
+        document.getElementById('monthCount').addEventListener('change', generateMonthlyInputs);
+        document.getElementById('feePercent').addEventListener('change', function() {
+            if (document.getElementById('isMultiMonth').checked) {
+                calculateMultiMonthFee();
+            }
+        });
 
-            document.querySelectorAll('.modal').forEach(modal => {
-                modal.addEventListener('click', function(e) {
-                    if (e.target === this) {
-                        this.classList.remove('active');
-                    }
-                });
-            });
+        // Settings
+        function showSettings() {
+            document.getElementById('settingsModal').classList.add('active');
+        }
+
+        function closeSettings() {
+            document.getElementById('settingsModal').classList.remove('active');
+            document.getElementById('newPassword').value = '';
+            document.getElementById('confirmPassword').value = '';
+        }
+
+        function changePassword() {
+            const newPass = document.getElementById('newPassword').value;
+            const confirmPass = document.getElementById('confirmPassword').value;
             
-            // Multi-month listeners
-            const monthCountInput = document.getElementById('monthCount');
-            if (monthCountInput) {
-                monthCountInput.addEventListener('change', generateMonthlyInputs);
+            if (!newPass || !confirmPass) {
+                showToast('⚠️ Nhập đầy đủ mật khẩu!');
+                return;
+            }
+            if (newPass !== confirmPass) {
+                showToast('⚠️ Mật khẩu không khớp!');
+                return;
             }
             
-            const feePercentInput = document.getElementById('feePercent');
-            if (feePercentInput) {
-                feePercentInput.addEventListener('change', function() {
-                    if (document.getElementById('isMultiMonth').checked) {
-                        calculateMultiMonthFee();
+            const newUserHash = btoa(newPass);
+            localStorage.setItem(`l4cc_data_${newUserHash}`, JSON.stringify(customers));
+            localStorage.removeItem(`l4cc_data_${currentUser}`);
+            currentUser = newUserHash;
+            localStorage.setItem('l4cc_user', newUserHash);
+            closeSettings();
+            showToast('✅ Đã đổi mật khẩu thành công!');
+        }
+
+        // Export/Import JSON
+        function exportData() {
+            if (customers.length === 0) {
+                showToast('⚠️ Không có dữ liệu để xuất!');
+                return;
+            }
+            
+            const exportData = {
+                version: '1.0',
+                exportDate: new Date().toISOString(),
+                customersCount: customers.length,
+                data: customers
+            };
+            
+            const dataStr = JSON.stringify(exportData, null, 2);
+            const dataBlob = new Blob([dataStr], { type: 'application/json' });
+            const url = URL.createObjectURL(dataBlob);
+            const link = document.createElement('a');
+            link.href = url;
+            link.download = `daohạn_pqt_backup_${new Date().toISOString().split('T')[0]}.json`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            URL.revokeObjectURL(url);
+            
+            showToast('✅ Đã xuất dữ liệu thành công!');
+        }
+
+        function importData(event) {
+            const file = event.target.files[0];
+            if (!file) return;
+            
+            if (!file.name.endsWith('.json')) {
+                showToast('⚠️ Vui lòng chọn file JSON!');
+                return;
+            }
+            
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                try {
+                    const importedData = JSON.parse(e.target.result);
+                    
+                    if (!importedData.data || !Array.isArray(importedData.data)) {
+                        showToast('⚠️ File không đúng định dạng!');
+                        return;
                     }
+                    
+                    if (confirm(`Tìm thấy ${importedData.customersCount} khách hàng.\n\nNhấn OK để GHI ĐÈ dữ liệu hiện tại.\nNhấn Cancel để HỦY.`)) {
+                        customers = importedData.data;
+                        saveUserData();
+                        renderCustomers();
+                        showToast(`✅ Đã nhập ${importedData.customersCount} khách hàng!`);
+                        closeSettings();
+                    }
+                } catch (error) {
+                    showToast('❌ Lỗi đọc file! File có thể bị hỏng.');
+                    console.error('Import error:', error);
+                }
+            };
+            reader.readAsText(file);
+            event.target.value = '';
+        }
+
+        // Export Excel
+        function exportExcel() {
+            if (customers.length === 0) {
+                showToast('⚠️ Không có dữ liệu để xuất!');
+                return;
+            }
+            
+            const exportData = [];
+            customers.forEach(customer => {
+                if (!customer.cards || customer.cards.length === 0) return;
+                
+                customer.cards.forEach(card => {
+                    const bank = getBankInfo(card.bankId);
+                    
+                    let totalFee = 0;
+                    let baseFee = 0;
+                    let additionalFee = card.additionalFee || 0;
+                    
+                    if (card.multiMonth && card.multiMonth.enabled) {
+                        totalFee = card.multiMonth.totalFee;
+                        baseFee = totalFee - additionalFee;
+                    } else {
+                        baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                        totalFee = baseFee + additionalFee;
+                    }
+                    
+                    const finalResult = calculateFinalResult(card.depositAmount, card.withdrawAmount, totalFee);
+                    const resultDisplay = formatResult(finalResult);
+                    
+                    let statusText = 'Chưa hoàn thành';
+                    if (card.status === 'completed') statusText = 'Đã hoàn thành';
+                    else if (card.status === 'no-contact') statusText = 'Không liên hệ';
+                    
+                    exportData.push({
+                        'Tên KH': customer.name,
+                        'SĐT': customer.phone,
+                        'Ngân hàng': bank.name,
+                        'Hạn mức': card.creditLimit,
+                        'Số dư': card.currentBalance,
+                        'Còn trống': card.creditLimit - card.currentBalance,
+                        'Ngày sao kê': card.statementDay,
+                        'Ngày TT': card.paymentDay,
+                        'Tiền nạp': card.depositAmount,
+                        'Tiền rút': card.withdrawAmount,
+                        'Phí %': card.feePercent,
+                        'Tính phí trên': card.feeCalculation === 'withdraw' ? 'Rút' : 'Nạp',
+                        'Phí cơ bản': baseFee,
+                        'Phụ thu': additionalFee,
+                        'Tổng phí': totalFee,
+                        'Kết quả': resultDisplay.text,
+                        'Trạng thái': statusText,
+                        'Đáo nhiều tháng': card.multiMonth && card.multiMonth.enabled ? `${card.multiMonth.monthCount} tháng` : 'Không',
+                        'Ghi chú': card.notes || ''
+                    });
                 });
+            });
+            
+            if (exportData.length === 0) {
+                showToast('⚠️ Không có thẻ nào để xuất!');
+                return;
+            }
+            
+            const ws = XLSX.utils.json_to_sheet(exportData);
+            const wb = XLSX.utils.book_new();
+            XLSX.utils.book_append_sheet(wb, ws, 'Danh sách');
+            
+            // Auto width
+            const cols = Object.keys(exportData[0]).map(key => ({wch: Math.max(key.length, 15)}));
+            ws['!cols'] = cols;
+            
+            XLSX.writeFile(wb, `DaoHan_PQT_${new Date().toISOString().split('T')[0]}.xlsx`);
+            showToast('✅ Đã xuất Excel thành công!');
+        }
+
+        // Navigation
+        function showCustomersView() {
+            document.getElementById('cardListPage').classList.remove('active');
+            document.getElementById('cardDetailPage').classList.remove('active');
+            document.getElementById('customersPage').classList.add('active');
+            currentCustomerId = null;
+            currentCardId = null;
+            
+            document.querySelectorAll('.nav-item').forEach(item => item.classList.remove('active'));
+            document.querySelectorAll('.nav-item')[0].classList.add('active');
+        }
+
+        // Toast
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'toast';
+            toast.textContent = message;
+            document.body.appendChild(toast);
+            setTimeout(() => toast.remove(), 3000);
+        }
+
+        // Modal click outside to close
+        document.querySelectorAll('.modal').forEach(modal => {
+            modal.addEventListener('click', function(e) {
+                if (e.target === this) {
+                    this.classList.remove('active');
+                }
+            });
+        });
+
+        // Search
+        document.getElementById('searchInput').addEventListener('input', renderCustomers);
+
+        // Enter key on login
+        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                login();
+            }
+        });
+
+        // Init
+        function init() {
+            loadTheme();
+            const savedUser = localStorage.getItem('l4cc_user');
+            if (savedUser) {
+                currentUser = savedUser;
+                loadUserData();
+                showMainApp();
             }
         }
 

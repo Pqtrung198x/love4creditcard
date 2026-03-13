@@ -872,11 +872,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Hạn mức thẻ (VNĐ) *</label>
-                        <input type="number" class="form-input" id="creditLimit" required min="0">
+                        <input type="text" class="form-input money-input" id="creditLimit" required placeholder="VD: 50,000,000">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Số dư hiện tại (VNĐ) *</label>
-                        <input type="number" class="form-input" id="currentBalance" required min="0">
+                        <input type="text" class="form-input money-input" id="currentBalance" required placeholder="VD: 30,000,000">
                     </div>
                 </div>
 
@@ -898,11 +898,11 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Số tiền nạp vào (VNĐ) *</label>
-                        <input type="number" class="form-input" id="depositAmount" required min="0">
+                        <input type="text" class="form-input money-input" id="depositAmount" required placeholder="VD: 40,000,000">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Số tiền rút ra (VNĐ) *</label>
-                        <input type="number" class="form-input" id="withdrawAmount" required min="0">
+                        <input type="text" class="form-input money-input" id="withdrawAmount" required placeholder="VD: 50,000,000">
                     </div>
                 </div>
 
@@ -922,7 +922,7 @@
 
                 <div class="form-group">
                     <label class="form-label">Phụ thu phí (VNĐ)</label>
-                    <input type="number" class="form-input" id="additionalFee" placeholder="Nhập số dương để thu thêm, số âm để giảm trừ (VD: 100000 hoặc -50000)">
+                    <input type="text" class="form-input money-input" id="additionalFee" placeholder="VD: 100,000 hoặc -50,000">
                     <small style="color: var(--text-secondary); font-size: 0.7rem; display: block; margin-top: 3px;">
                         Số dương (+): Thu thêm | Số âm (-): Giảm trừ | Để trống: Không phụ thu
                     </small>
@@ -1637,15 +1637,15 @@
             document.getElementById('cardCustomerId').value = customerId;
             document.getElementById('cardId').value = cardId;
             document.getElementById('bankSelect').value = card.bankId;
-            document.getElementById('creditLimit').value = card.creditLimit;
-            document.getElementById('currentBalance').value = card.currentBalance;
+            document.getElementById('creditLimit').value = card.creditLimit.toLocaleString('en-US');
+            document.getElementById('currentBalance').value = card.currentBalance.toLocaleString('en-US');
             document.getElementById('statementDay').value = card.statementDay;
             document.getElementById('paymentDay').value = card.paymentDay;
-            document.getElementById('depositAmount').value = card.depositAmount;
-            document.getElementById('withdrawAmount').value = card.withdrawAmount;
+            document.getElementById('depositAmount').value = card.depositAmount.toLocaleString('en-US');
+            document.getElementById('withdrawAmount').value = card.withdrawAmount.toLocaleString('en-US');
             document.getElementById('feePercent').value = card.feePercent;
             document.getElementById('feeCalculation').value = card.feeCalculation;
-            document.getElementById('additionalFee').value = card.additionalFee || '';
+            document.getElementById('additionalFee').value = card.additionalFee ? card.additionalFee.toLocaleString('en-US') : '';
             document.getElementById('cardStatus').value = card.status;
             document.getElementById('notes').value = card.notes || '';
             
@@ -1656,10 +1656,10 @@
                 document.getElementById('monthCount').value = card.multiMonth.monthCount;
                 generateMonthlyInputs();
                 
-                // Fill in monthly amounts
+                // Fill in monthly amounts with formatting
                 card.multiMonth.monthlyAmounts.forEach(item => {
                     const input = document.getElementById(`month${item.month}Amount`);
-                    if (input) input.value = item.amount;
+                    if (input) input.value = item.amount.toLocaleString('en-US');
                 });
                 calculateMultiMonthFee();
             } else {
@@ -1702,7 +1702,7 @@
                 let totalMultiMonthFee = 0;
                 
                 for (let i = 1; i <= monthCount; i++) {
-                    const amount = parseInt(document.getElementById(`month${i}Amount`)?.value) || 0;
+                    const amount = parseMoneyInput(document.getElementById(`month${i}Amount`)?.value);
                     if (amount > 0) {
                         const feePercent = parseFloat(document.getElementById('feePercent').value);
                         const fee = Math.round(amount * feePercent / 100);
@@ -1722,15 +1722,15 @@
             const cardData = {
                 id: editingCardId || Date.now().toString(),
                 bankId: document.getElementById('bankSelect').value,
-                creditLimit: parseInt(document.getElementById('creditLimit').value),
-                currentBalance: parseInt(document.getElementById('currentBalance').value),
+                creditLimit: parseMoneyInput(document.getElementById('creditLimit').value),
+                currentBalance: parseMoneyInput(document.getElementById('currentBalance').value),
                 statementDay: parseInt(document.getElementById('statementDay').value),
                 paymentDay: parseInt(document.getElementById('paymentDay').value),
-                depositAmount: parseInt(document.getElementById('depositAmount').value),
-                withdrawAmount: parseInt(document.getElementById('withdrawAmount').value),
+                depositAmount: parseMoneyInput(document.getElementById('depositAmount').value),
+                withdrawAmount: parseMoneyInput(document.getElementById('withdrawAmount').value),
                 feePercent: parseFloat(document.getElementById('feePercent').value),
                 feeCalculation: document.getElementById('feeCalculation').value,
-                additionalFee: additionalFeeValue ? parseInt(additionalFeeValue) : 0,
+                additionalFee: parseMoneyInput(document.getElementById('additionalFee').value),
                 multiMonth: multiMonthData,
                 status: document.getElementById('cardStatus').value,
                 notes: document.getElementById('notes').value,
@@ -1930,6 +1930,41 @@
 
         function setupEventListeners() {
             document.getElementById('searchCustomer').addEventListener('input', renderCustomerList);
+            setupMoneyInputs();
+        }
+
+        // Auto-format money inputs
+        function setupMoneyInputs() {
+            document.querySelectorAll('.money-input').forEach(input => {
+                input.addEventListener('input', function(e) {
+                    formatMoneyInput(e.target);
+                });
+                
+                input.addEventListener('blur', function(e) {
+                    formatMoneyInput(e.target);
+                });
+            });
+        }
+
+        function formatMoneyInput(input) {
+            let value = input.value.replace(/[^0-9-]/g, ''); // Chỉ giữ số và dấu trừ
+            
+            if (value === '' || value === '-') {
+                return;
+            }
+            
+            let isNegative = value.startsWith('-');
+            let numValue = value.replace('-', '');
+            
+            if (numValue) {
+                let formatted = parseInt(numValue).toLocaleString('en-US');
+                input.value = isNegative ? '-' + formatted : formatted;
+            }
+        }
+
+        function parseMoneyInput(value) {
+            if (!value) return 0;
+            return parseInt(value.replace(/[^0-9-]/g, '')) || 0;
         }
 
         function toggleMultiMonth() {
@@ -1956,16 +1991,17 @@
                         <label style="font-size: 0.75rem; color: var(--text-secondary); display: block; margin-bottom: 3px;">
                             Tháng ${i}:
                         </label>
-                        <input type="number" 
-                               class="form-input monthly-amount" 
+                        <input type="text" 
+                               class="form-input money-input monthly-amount" 
                                id="month${i}Amount" 
-                               placeholder="Số tiền tháng ${i}"
+                               placeholder="VD: 40,000,000"
                                onchange="calculateMultiMonthFee()"
                                style="font-size: 0.85rem; padding: 6px 8px;">
                     </div>
                 `;
             }
             container.innerHTML = html;
+            setupMoneyInputs(); // Re-setup money inputs for new fields
             calculateMultiMonthFee();
         }
 
@@ -1976,7 +2012,7 @@
             let breakdown = [];
             
             for (let i = 1; i <= monthCount; i++) {
-                const amount = parseInt(document.getElementById(`month${i}Amount`)?.value) || 0;
+                const amount = parseMoneyInput(document.getElementById(`month${i}Amount`)?.value);
                 if (amount > 0) {
                     const monthFee = Math.round(amount * feePercent / 100);
                     totalFee += monthFee;
