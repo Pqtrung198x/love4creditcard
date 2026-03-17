@@ -719,7 +719,7 @@
 </head>
 <body>
     <!-- Login Screen -->
-    <div id="authScreen" class="login-screen">
+    <div id="authScreen" class="login-screen" style="display: none;">
         <div class="login-card">
             <div class="login-logo">💳</div>
             <h1 class="login-title">Đáo Hạn PQT</h1>
@@ -727,10 +727,10 @@
             
             <div class="form-group">
                 <label class="form-label">Mật khẩu</label>
-                <input type="password" class="form-input" id="loginPassword" placeholder="Nhập mật khẩu" autofocus onkeypress="if(event.key==='Enter') login()">
+                <input type="password" class="form-input" id="loginPassword" placeholder="Nhập mật khẩu" autofocus>
             </div>
             
-            <button type="button" class="btn btn-primary" onclick="login()">
+            <button class="btn btn-primary" onclick="login()">
                 <i class="fas fa-sign-in-alt"></i>
                 Đăng nhập
             </button>
@@ -738,7 +738,7 @@
     </div>
 
     <!-- Main App -->
-    <div id="mainApp" style="display: none;">
+    <div id="mainApp">
         <!-- Header Banner -->
         <div class="header-banner">
             <div class="header-top">
@@ -1237,23 +1237,17 @@
 
         // Authentication
         function login() {
-            console.log('Login called');
             const password = document.getElementById('loginPassword').value;
-            console.log('Password:', password ? 'entered' : 'empty');
             if (!password) {
                 showToast('⚠️ Vui lòng nhập mật khẩu');
                 return;
             }
             
             const userHash = btoa(password);
-            console.log('Hash created');
             currentUser = userHash;
             localStorage.setItem('l4cc_user', userHash);
-            console.log('Saved to localStorage');
             loadUserData();
-            console.log('Data loaded');
             showMainApp();
-            console.log('Main app shown');
             showToast('✅ Đăng nhập thành công!');
         }
 
@@ -2454,12 +2448,10 @@
         // Init
         function init() {
             loadTheme();
-            const savedUser = localStorage.getItem('l4cc_user');
-            if (savedUser) {
-                currentUser = savedUser;
-                loadUserData();
-                showMainApp();
-            }
+            // Skip login - go straight to app
+            currentUser = 'default_user';
+            loadUserData();
+            renderCustomers();
         }
 
         init();
