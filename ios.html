@@ -12,20 +12,24 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #4A90E2;
-            --primary-dark: #3A7BC8;
-            --primary-light: #6BA3E8;
-            --success: #52C41A;
-            --danger: #FF4D4F;
-            --warning: #FAAD14;
-            --info: #1890FF;
-            --bg: #F5F7FA;
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #8B5CF6;
+            --accent: #06B6D4;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --dark: #1E293B;
+            --darker: #0F172A;
+            --gray: #64748B;
+            --gray-light: #94A3B8;
+            --bg: #F8FAFC;
             --card-bg: #FFFFFF;
-            --text: #2C3E50;
-            --text-secondary: #7F8C8D;
-            --border: #E8ECEF;
-            --shadow: rgba(0, 0, 0, 0.08);
-            --shadow-lg: rgba(0, 0, 0, 0.15);
+            --text: #1E293B;
+            --text-secondary: #64748B;
+            --border: #E2E8F0;
+            --shadow: rgba(0, 0, 0, 0.06);
+            --shadow-lg: rgba(0, 0, 0, 0.1);
             --overlay: rgba(0, 0, 0, 0.5);
             
             --safe-top: env(safe-area-inset-top);
@@ -35,18 +39,22 @@
         }
 
         [data-theme="dark"] {
-            --primary: #5FA3EF;
-            --primary-dark: #4A90E2;
-            --primary-light: #7AB5F2;
-            --success: #73D13D;
-            --danger: #FF7875;
-            --warning: #FFC53D;
-            --info: #40A9FF;
-            --bg: #0F1419;
-            --card-bg: #1C2128;
-            --text: #E8EAED;
-            --text-secondary: #9CA3AF;
-            --border: #30363D;
+            --primary: #818CF8;
+            --primary-dark: #6366F1;
+            --secondary: #A78BFA;
+            --accent: #22D3EE;
+            --success: #34D399;
+            --danger: #F87171;
+            --warning: #FBBF24;
+            --dark: #E2E8F0;
+            --darker: #F8FAFC;
+            --gray: #94A3B8;
+            --gray-light: #64748B;
+            --bg: #0F172A;
+            --card-bg: #1E293B;
+            --text: #E2E8F0;
+            --text-secondary: #94A3B8;
+            --border: #334155;
             --shadow: rgba(0, 0, 0, 0.3);
             --shadow-lg: rgba(0, 0, 0, 0.5);
             --overlay: rgba(0, 0, 0, 0.7);
@@ -566,31 +574,6 @@
             box-shadow: 0 4px 12px rgba(255, 77, 79, 0.3);
         }
 
-        /* FAB */
-        .fab {
-            position: fixed;
-            bottom: calc(80px + var(--safe-bottom));
-            right: 20px;
-            width: 60px;
-            height: 60px;
-            border-radius: 50%;
-            background: var(--primary);
-            color: white;
-            border: none;
-            font-size: 26px;
-            box-shadow: 0 6px 16px rgba(74, 144, 226, 0.4);
-            cursor: pointer;
-            transition: var(--transition);
-            z-index: 50;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .fab:active {
-            transform: scale(0.95);
-        }
-
         /* Toast */
         .toast {
             position: fixed;
@@ -767,9 +750,14 @@
                     <div class="app-logo">💳</div>
                     <div class="app-name">Đáo Hạn PQT</div>
                 </div>
-                <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                    <i class="fas fa-moon" id="themeIcon"></i>
-                </button>
+                <div style="display: flex; gap: 8px;">
+                    <button class="theme-toggle" onclick="location.reload()" aria-label="Refresh">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                </div>
             </div>
             <div class="search-box">
                 <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm khách hàng...">
@@ -780,17 +768,13 @@
         <!-- Tabs -->
         <div class="tabs-container">
             <div class="tabs">
-                <div class="tab active" data-tab="all" onclick="switchTab('all')">
-                    <i class="fas fa-list"></i>
-                    <span>Tất cả</span>
+                <div class="tab active" data-tab="current" onclick="switchTab('current')">
+                    <i class="fas fa-calendar-day"></i>
+                    <span>Tháng này</span>
                 </div>
-                <div class="tab" data-tab="processing" onclick="switchTab('processing')">
-                    <i class="fas fa-clock"></i>
-                    <span>Đang xử lý</span>
-                </div>
-                <div class="tab" data-tab="completed" onclick="switchTab('completed')">
-                    <i class="fas fa-check-circle"></i>
-                    <span>Hoàn thành</span>
+                <div class="tab" data-tab="archive" onclick="switchTab('archive')">
+                    <i class="fas fa-archive"></i>
+                    <span>Lưu trữ</span>
                 </div>
             </div>
         </div>
@@ -825,24 +809,27 @@
             </div>
         </div>
 
-        <!-- FAB -->
-        <button class="fab" onclick="showAddCustomerModal()" aria-label="Add customer">
-            <i class="fas fa-plus"></i>
-        </button>
+        <!-- Archive Month Page -->
+        <div id="archiveMonthPage" class="page">
+            <div class="customers-section">
+                <button class="btn btn-secondary" onclick="goBackToArchive()" style="margin-bottom: 16px;">
+                    <i class="fas fa-arrow-left"></i>
+                    Quay lại
+                </button>
+                <div id="archiveMonthContent"></div>
+            </div>
+        </div>
 
         <!-- Bottom Navigation -->
         <div class="bottom-nav">
             <div class="nav-item active" onclick="showCustomersView()">
                 <i class="fas fa-users nav-icon"></i>
-                <span class="nav-label">Khách hàng</span>
             </div>
-            <div class="nav-item" onclick="exportExcel()">
-                <i class="fas fa-file-excel nav-icon"></i>
-                <span class="nav-label">Xuất Excel</span>
+            <div class="nav-item" onclick="showAddCustomerModal()">
+                <i class="fas fa-user-plus nav-icon"></i>
             </div>
             <div class="nav-item" onclick="showSettings()">
                 <i class="fas fa-cog nav-icon"></i>
-                <span class="nav-label">Cài đặt</span>
             </div>
         </div>
     </div>
@@ -938,7 +925,7 @@
                     <div class="form-row">
                         <div class="form-group">
                             <label class="form-label form-label-required">Phí đáo (%)</label>
-                            <input type="number" class="form-input" id="feePercent" required min="0" max="100" step="0.1" placeholder="2.0">
+                            <input type="number" class="form-input" id="feePercent" required min="0" max="100" step="0.1" value="2.5" placeholder="2.5">
                         </div>
                         <div class="form-group">
                             <label class="form-label form-label-required">Tính phí trên</label>
@@ -1134,11 +1121,86 @@
 
         let currentUser = null;
         let customers = [];
-        let currentTab = 'all';
+        let archivedMonths = {}; // {yearMonth: {customers: [...], cards: [...]}}
+        let currentTab = 'current';
         let currentCustomerId = null;
         let currentCardId = null;
         let editingCustomerId = null;
         let editingCardId = null;
+
+        // Get current month key
+        function getCurrentMonthKey() {
+            const now = new Date();
+            return `${now.getFullYear()}-${String(now.getMonth() + 1).padStart(2, '0')}`;
+        }
+
+        // Get month name from key
+        function getMonthName(monthKey) {
+            const [year, month] = monthKey.split('-');
+            const monthNames = ['Tháng 1', 'Tháng 2', 'Tháng 3', 'Tháng 4', 'Tháng 5', 'Tháng 6',
+                              'Tháng 7', 'Tháng 8', 'Tháng 9', 'Tháng 10', 'Tháng 11', 'Tháng 12'];
+            return `${monthNames[parseInt(month) - 1]} ${year}`;
+        }
+
+        // Archive a completed card
+        function archiveCompletedCard(customer, card) {
+            const monthKey = getCurrentMonthKey();
+            if (!archivedMonths[monthKey]) {
+                archivedMonths[monthKey] = {
+                    cards: [],
+                    stats: { totalFee: 0, totalDeposit: 0, totalWithdraw: 0 }
+                };
+            }
+            
+            // Calculate card fee
+            let cardFee = 0;
+            if (card.multiMonth && card.multiMonth.enabled) {
+                cardFee = card.multiMonth.totalFee;
+            } else {
+                const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                cardFee = baseFee + (card.additionalFee || 0);
+            }
+            
+            // Add to archive with customer info
+            archivedMonths[monthKey].cards.push({
+                ...card,
+                customerName: customer.name,
+                customerPhone: customer.phone,
+                archivedAt: new Date().toISOString()
+            });
+            
+            // Update month stats
+            archivedMonths[monthKey].stats.totalFee += cardFee;
+            archivedMonths[monthKey].stats.totalDeposit += card.depositAmount;
+            archivedMonths[monthKey].stats.totalWithdraw += card.withdrawAmount;
+            
+            // Save archive
+            localStorage.setItem(`l4cc_archive_${currentUser}`, JSON.stringify(archivedMonths));
+        }
+
+        // Copy card to next month
+        function copyCardToNextMonth(customer, oldCard) {
+            const newCard = {
+                id: Date.now().toString(),
+                bankId: oldCard.bankId,
+                creditLimit: oldCard.creditLimit,
+                currentBalance: oldCard.creditLimit - oldCard.withdrawAmount + oldCard.depositAmount, // Updated balance
+                statementDay: oldCard.statementDay,
+                paymentDay: oldCard.paymentDay,
+                depositAmount: 0, // Reset
+                withdrawAmount: 0, // Reset
+                feePercent: oldCard.feePercent,
+                feeCalculation: oldCard.feeCalculation,
+                additionalFee: 0, // Reset
+                multiMonth: null, // Reset
+                status: 'processing',
+                notes: '',
+                createdAt: new Date().toISOString()
+            };
+            
+            customer.cards.push(newCard);
+            return newCard;
+        }
 
         // Theme Management
         function toggleTheme() {
@@ -1195,7 +1257,13 @@
         function loadUserData() {
             const data = localStorage.getItem(`l4cc_data_${currentUser}`);
             customers = data ? JSON.parse(data) : [];
+            loadArchiveData();
             renderCustomers();
+        }
+
+        function loadArchiveData() {
+            const archiveData = localStorage.getItem(`l4cc_archive_${currentUser}`);
+            archivedMonths = archiveData ? JSON.parse(archiveData) : {};
         }
 
         function saveUserData() {
@@ -1289,16 +1357,15 @@
             const searchTerm = document.getElementById('searchInput').value.toLowerCase();
             const grid = document.getElementById('customersGrid');
             
+            // If archive tab, show archive months instead
+            if (currentTab === 'archive') {
+                renderArchiveMonths();
+                return;
+            }
+            
             let filtered = customers.filter(c => {
                 const matchSearch = c.name.toLowerCase().includes(searchTerm) || c.phone.includes(searchTerm);
-                if (currentTab === 'all') return matchSearch;
-                
-                const hasStatus = c.cards && c.cards.some(card => {
-                    if (currentTab === 'processing') return card.status === 'processing';
-                    if (currentTab === 'completed') return card.status === 'completed';
-                    return false;
-                });
-                return matchSearch && hasStatus;
+                return matchSearch;
             });
 
             if (filtered.length === 0) {
@@ -1334,24 +1401,8 @@
                 
                 return `
                     <div class="customer-card" onclick="viewCustomer('${customer.id}')">
-                        <div class="customer-header">
-                            <div class="customer-info">
-                                <div class="customer-name">${customer.name}</div>
-                                <div class="customer-phone">
-                                    <i class="fas fa-phone"></i>
-                                    ${customer.phone}
-                                </div>
-                            </div>
-                            <div class="customer-actions" onclick="event.stopPropagation()">
-                                <button class="icon-btn edit" onclick="editCustomer('${customer.id}')" title="Sửa">
-                                    <i class="fas fa-pen"></i>
-                                </button>
-                                <button class="icon-btn delete" onclick="deleteCustomer('${customer.id}')" title="Xóa">
-                                    <i class="fas fa-trash"></i>
-                                </button>
-                            </div>
-                        </div>
-                        <div class="customer-stats">
+                        <div class="customer-name">${customer.name}</div>
+                        <div class="customer-footer">
                             <div class="stat-item">
                                 <div class="stat-label">Số thẻ</div>
                                 <div class="stat-value">${cardCount}</div>
@@ -1361,9 +1412,144 @@
                                 <div class="stat-value ${resultClass}">${result === 0 ? 'Hòa' : formatMoney(Math.abs(result))}</div>
                             </div>
                         </div>
+                        <div class="customer-actions" onclick="event.stopPropagation()">
+                            <button class="icon-btn edit" onclick="editCustomer('${customer.id}')">
+                                <i class="fas fa-pen"></i> Sửa
+                            </button>
+                            <button class="icon-btn delete" onclick="deleteCustomer('${customer.id}')">
+                                <i class="fas fa-trash"></i> Xóa
+                            </button>
+                        </div>
                     </div>
                 `;
             }).join('');
+        }
+
+        // Render Archive Months
+        function renderArchiveMonths() {
+            const grid = document.getElementById('customersGrid');
+            const monthKeys = Object.keys(archivedMonths).sort().reverse(); // Newest first
+            
+            if (monthKeys.length === 0) {
+                grid.innerHTML = `
+                    <div class="empty-state">
+                        <div class="empty-icon">📦</div>
+                        <div class="empty-text">Chưa có lưu trữ</div>
+                        <div class="form-hint">Thẻ đã hoàn thành sẽ được lưu trữ theo tháng</div>
+                    </div>
+                `;
+                return;
+            }
+            
+            grid.innerHTML = monthKeys.map(monthKey => {
+                const archive = archivedMonths[monthKey];
+                const cardCount = archive.cards.length;
+                const result = archive.stats.totalWithdraw - archive.stats.totalDeposit - archive.stats.totalFee;
+                const resultClass = result > 0 ? 'negative' : result < 0 ? 'positive' : '';
+                
+                return `
+                    <div class="customer-card" onclick="viewArchiveMonth('${monthKey}')" style="background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg) 100%);">
+                        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
+                            <i class="fas fa-archive" style="color: var(--primary); font-size: 18px;"></i>
+                            <div class="customer-name" style="margin: 0;">${getMonthName(monthKey)}</div>
+                        </div>
+                        <div class="customer-footer">
+                            <div class="stat-item">
+                                <div class="stat-label">Số thẻ</div>
+                                <div class="stat-value">${cardCount}</div>
+                            </div>
+                            <div class="stat-item">
+                                <div class="stat-label">Lãi/Lỗ</div>
+                                <div class="stat-value ${resultClass}">${result === 0 ? 'Hòa' : formatMoney(Math.abs(result))}</div>
+                            </div>
+                        </div>
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-secondary);">
+                            <i class="fas fa-coins"></i> Tổng phí: ${formatMoney(archive.stats.totalFee)}
+                        </div>
+                    </div>
+                `;
+            }).join('');
+        }
+
+        // View Archive Month
+        function viewArchiveMonth(monthKey) {
+            const archive = archivedMonths[monthKey];
+            if (!archive) return;
+            
+            document.getElementById('customersPage').classList.remove('active');
+            document.getElementById('archiveMonthPage').classList.add('active');
+            
+            const container = document.getElementById('archiveMonthContent');
+            
+            // Summary card
+            const result = archive.stats.totalWithdraw - archive.stats.totalDeposit - archive.stats.totalFee;
+            const resultDisplay = formatResult(result);
+            
+            let html = `
+                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white;">
+                    <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
+                        <i class="fas fa-archive" style="font-size: 24px;"></i>
+                        <div style="font-size: 20px; font-weight: 700;">${getMonthName(monthKey)}</div>
+                    </div>
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Số thẻ</div>
+                            <div style="font-size: 16px; font-weight: 600;">${archive.cards.length}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Tổng phí</div>
+                            <div style="font-size: 16px; font-weight: 600;">${formatMoney(archive.stats.totalFee)}</div>
+                        </div>
+                        <div style="grid-column: 1 / -1;">
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Kết quả</div>
+                            <div style="font-size: 18px; font-weight: 700;">${resultDisplay.icon} ${resultDisplay.text}</div>
+                        </div>
+                    </div>
+                </div>
+                
+                <div style="margin-bottom: 12px; font-size: 15px; font-weight: 600; color: var(--dark);">
+                    <i class="fas fa-list"></i> Danh sách thẻ (${archive.cards.length})
+                </div>
+            `;
+            
+            // List all cards
+            archive.cards.forEach(card => {
+                const bank = getBankInfo(card.bankId);
+                let cardFee = 0;
+                if (card.multiMonth && card.multiMonth.enabled) {
+                    cardFee = card.multiMonth.totalFee;
+                } else {
+                    const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                    cardFee = baseFee + (card.additionalFee || 0);
+                }
+                const cardResult = card.withdrawAmount - card.depositAmount - cardFee;
+                const cardResultDisplay = formatResult(cardResult);
+                
+                html += `
+                    <div class="customer-card" style="margin-bottom: 10px;">
+                        <div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">${bank.name}</div>
+                        <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+                            <i class="fas fa-user"></i> ${card.customerName} • <i class="fas fa-phone"></i> ${card.customerPhone}
+                        </div>
+                        <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 12px;">
+                            <div><span style="color: var(--text-secondary);">Hạn mức:</span> <strong>${formatMoney(card.creditLimit)}</strong></div>
+                            <div><span style="color: var(--text-secondary);">Nạp:</span> <strong>${formatMoney(card.depositAmount)}</strong></div>
+                            <div><span style="color: var(--text-secondary);">Rút:</span> <strong>${formatMoney(card.withdrawAmount)}</strong></div>
+                            <div><span style="color: var(--text-secondary);">Phí:</span> <strong style="color: var(--danger);">${formatMoney(cardFee)}</strong></div>
+                        </div>
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600;">
+                            ${cardResultDisplay.icon} ${cardResultDisplay.text}
+                        </div>
+                    </div>
+                `;
+            });
+            
+            container.innerHTML = html;
+        }
+
+        function goBackToArchive() {
+            document.getElementById('archiveMonthPage').classList.remove('active');
+            document.getElementById('customersPage').classList.add('active');
         }
 
         // Customer CRUD
@@ -1895,9 +2081,20 @@
             
             if (!customer.cards) customer.cards = [];
             
+            const previousStatus = editingCardId ? customer.cards.find(c => c.id === editingCardId)?.status : null;
+            const isNewlyCompleted = cardData.status === 'completed' && previousStatus !== 'completed';
+            
             if (editingCardId) {
                 const index = customer.cards.findIndex(c => c.id === editingCardId);
+                const oldCard = customer.cards[index];
                 customer.cards[index] = cardData;
+                
+                // If newly completed, archive and create new card for next month
+                if (isNewlyCompleted) {
+                    archiveCompletedCard(customer, cardData);
+                    copyCardToNextMonth(customer, cardData);
+                    showToast('✅ Đã lưu vào lưu trữ và tạo thẻ mới cho tháng sau!');
+                }
             } else {
                 customer.cards.push(cardData);
             }
@@ -1910,7 +2107,9 @@
                 renderCustomerSummary(customer);
             }
             
-            showToast('✅ Đã lưu thẻ!');
+            if (!isNewlyCompleted) {
+                showToast('✅ Đã lưu thẻ!');
+            }
         });
 
         // Multi-month functions

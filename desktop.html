@@ -3,21 +3,25 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Love4CreditCard - Quản Lý Đáo Hạn Thẻ Tín Dụng</title>
+    <title>Đáo Hạn PQT - Quản Lý Đáo Hạn Thẻ Tín Dụng</title>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary-green: #7cb342;
-            --light-green: #aed581;
-            --accent-purple: #9c27b0;
-            --accent-red: #e53935;
-            --accent-orange: #ff9800;
-            --bg-light: #f5f5f5;
-            --bg-white: #ffffff;
-            --text-dark: #212121;
-            --text-secondary: #757575;
-            --border-color: #e0e0e0;
-            --shadow: 0 2px 8px rgba(0,0,0,0.1);
+            --primary: #6366F1;
+            --primary-dark: #4F46E5;
+            --secondary: #8B5CF6;
+            --accent: #06B6D4;
+            --success: #10B981;
+            --danger: #EF4444;
+            --warning: #F59E0B;
+            --dark: #1E293B;
+            --gray: #64748B;
+            --bg-light: #F8FAFC;
+            --bg-white: #FFFFFF;
+            --text-dark: #1E293B;
+            --text-secondary: #64748B;
+            --border-color: #E2E8F0;
+            --shadow: 0 2px 8px rgba(0,0,0,0.06);
         }
 
         * {
@@ -35,7 +39,7 @@
         }
 
         .header-banner {
-            background: linear-gradient(135deg, var(--primary-green) 0%, var(--light-green) 100%);
+            background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
             padding: 15px;
             text-align: center;
             box-shadow: var(--shadow);
@@ -71,7 +75,7 @@
 
         .auth-title {
             text-align: center;
-            color: var(--primary-green);
+            color: var(--primary);
             margin-bottom: 20px;
             font-size: 1.3rem;
         }
@@ -99,7 +103,7 @@
 
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
-            border-color: var(--primary-green);
+            border-color: var(--primary);
         }
 
         .form-textarea {
@@ -118,7 +122,7 @@
         }
 
         .btn-primary {
-            background: var(--primary-green);
+            background: var(--primary);
             color: white;
         }
 
@@ -127,7 +131,7 @@
         }
 
         .btn-secondary {
-            background: var(--accent-purple);
+            background: var(--secondary);
             color: white;
         }
 
@@ -136,7 +140,7 @@
         }
 
         .btn-danger {
-            background: var(--accent-red);
+            background: var(--danger);
             color: white;
         }
 
@@ -218,16 +222,16 @@
         }
 
         .tab.active {
-            color: var(--primary-green);
-            border-bottom-color: var(--primary-green);
+            color: var(--primary);
+            border-bottom-color: var(--primary);
         }
 
         .tab:hover {
-            color: var(--primary-green);
+            color: var(--primary);
         }
 
         .tab-badge {
-            background: var(--accent-red);
+            background: var(--danger);
             color: white;
             padding: 1px 6px;
             border-radius: 10px;
@@ -253,7 +257,7 @@
             box-shadow: var(--shadow);
             cursor: pointer;
             transition: all 0.3s;
-            border-left: 3px solid var(--primary-green);
+            border-left: 3px solid var(--primary);
         }
 
         .customer-item:hover {
@@ -292,7 +296,7 @@
         }
 
         .stat-badge strong {
-            color: var(--primary-green);
+            color: var(--primary);
         }
 
         .customer-actions {
@@ -321,7 +325,7 @@
         .summary-title {
             font-size: 1.1rem;
             font-weight: bold;
-            color: var(--primary-green);
+            color: var(--primary);
         }
 
         .summary-grid {
@@ -350,11 +354,11 @@
         }
 
         .summary-value.positive {
-            color: var(--primary-green);
+            color: var(--primary);
         }
 
         .summary-value.negative {
-            color: var(--accent-red);
+            color: var(--danger);
         }
 
         .card-list {
@@ -369,7 +373,7 @@
             box-shadow: var(--shadow);
             cursor: pointer;
             transition: all 0.3s;
-            border-left: 3px solid var(--primary-green);
+            border-left: 3px solid var(--primary);
         }
 
         .card-list-item:hover {
@@ -378,12 +382,12 @@
         }
 
         .card-list-item.completed {
-            border-left-color: var(--light-green);
+            border-left-color: var(--primary);
             opacity: 0.85;
         }
 
         .card-list-item.no-contact {
-            border-left-color: var(--accent-orange);
+            border-left-color: var(--warning);
         }
 
         .card-list-header {
@@ -450,7 +454,7 @@
 
         .card-detail-title h2 {
             margin: 0;
-            color: var(--primary-green);
+            color: var(--primary);
             font-size: 1.2rem;
         }
 
@@ -485,15 +489,15 @@
         }
 
         .info-value.positive {
-            color: var(--primary-green);
+            color: var(--primary);
         }
 
         .info-value.negative {
-            color: var(--accent-red);
+            color: var(--danger);
         }
 
         .info-value.neutral {
-            color: var(--accent-purple);
+            color: var(--secondary);
         }
 
         .money-detail {
@@ -578,7 +582,7 @@
 
         .modal-title {
             font-size: 1.2rem;
-            color: var(--primary-green);
+            color: var(--primary);
         }
 
         .close-btn {
@@ -602,12 +606,12 @@
             border-radius: 6px;
             box-shadow: var(--shadow);
             text-align: center;
-            border-top: 3px solid var(--primary-green);
+            border-top: 3px solid var(--primary);
             font-size: 0.75rem;
         }
 
         .copyright-title {
-            color: var(--accent-red);
+            color: var(--danger);
             font-weight: bold;
             margin-bottom: 6px;
         }
@@ -617,7 +621,7 @@
         }
 
         .copyright-warning {
-            color: var(--accent-red);
+            color: var(--danger);
             font-weight: bold;
             margin-top: 6px;
         }
@@ -633,7 +637,7 @@
             position: fixed;
             top: 15px;
             right: 15px;
-            background: var(--primary-green);
+            background: var(--primary);
             color: white;
             padding: 10px 18px;
             border-radius: 4px;
@@ -677,7 +681,7 @@
         }
 
         .reminder-badge {
-            background: var(--accent-red);
+            background: var(--danger);
             color: white;
             padding: 2px 6px;
             border-radius: 10px;
@@ -716,7 +720,7 @@
     <!-- Màn hình đăng nhập -->
     <div id="authScreen">
         <div class="auth-container">
-            <div class="auth-title">🔐 Love4CreditCard</div>
+            <div class="auth-title">🔐 Đáo Hạn PQT</div>
             <form id="loginForm">
                 <div class="form-group">
                     <label class="form-label">Mật khẩu</label>
@@ -735,8 +739,8 @@
         <div class="header-banner">
             <div style="display: flex; justify-content: space-between; align-items: center; max-width: 1400px; margin: 0 auto; flex-wrap: wrap;">
                 <div>
-                    <div class="logo">💳 Love4CreditCard</div>
-                    <div class="logo-subtitle">Hệ Thống Quản Lý Đáo Hạn Thẻ Tín Dụng Chuyên Nghiệp</div>
+                    <div class="logo">💳 Đáo Hạn PQT</div>
+                    <div class="logo-subtitle">Quản Lý Đáo Hạn Thẻ Tín Dụng Chuyên Nghiệp</div>
                 </div>
                 <div>
                     <a href="#" class="settings-link" onclick="showSettings(); return false;">⚙️ Cài đặt</a>
@@ -773,11 +777,11 @@
                     </button>
                     <button class="tab" onclick="switchTab('completed', event)">
                         Đã hoàn thành
-                        <span class="tab-badge" id="completedCount" style="background: var(--primary-green);">0</span>
+                        <span class="tab-badge" id="completedCount" style="background: var(--primary);">0</span>
                     </button>
                     <button class="tab" onclick="switchTab('no-contact', event)">
                         Không liên hệ
-                        <span class="tab-badge" id="noContactCount" style="background: var(--accent-orange);">0</span>
+                        <span class="tab-badge" id="noContactCount" style="background: var(--warning);">0</span>
                     </button>
                 </div>
 
@@ -909,7 +913,7 @@
                 <div class="form-row">
                     <div class="form-group">
                         <label class="form-label">Phí đáo hạn (%) *</label>
-                        <input type="number" class="form-input" id="feePercent" required min="0" max="100" step="0.1" placeholder="VD: 2.0">
+                        <input type="number" class="form-input" id="feePercent" required min="0" max="100" step="0.1" value="2.5" placeholder="2.5">
                     </div>
                     <div class="form-group">
                         <label class="form-label">Tính phí trên *</label>
@@ -954,7 +958,7 @@
 
                     <div class="form-group">
                         <label class="form-label">Tổng phí dự tính</label>
-                        <div id="totalMultiMonthFee" style="background: rgba(229, 57, 53, 0.1); padding: 10px; border-radius: 4px; font-weight: bold; color: var(--accent-red);"></div>
+                        <div id="totalMultiMonthFee" style="background: rgba(229, 57, 53, 0.1); padding: 10px; border-radius: 4px; font-weight: bold; color: var(--danger);"></div>
                     </div>
                 </div>
 
@@ -1375,7 +1379,7 @@
                         <div class="customer-phone">📞 ${customer.phone}</div>
                         <div class="customer-stats">
                             <span class="stat-badge">💳 <strong>${totalCards}</strong> thẻ</span>
-                            ${upcomingCards > 0 ? `<span class="stat-badge" style="background: rgba(229, 57, 53, 0.1); color: var(--accent-red);">🔔 <strong>${upcomingCards}</strong> nhắc</span>` : ''}
+                            ${upcomingCards > 0 ? `<span class="stat-badge" style="background: rgba(229, 57, 53, 0.1); color: var(--danger);">🔔 <strong>${upcomingCards}</strong> nhắc</span>` : ''}
                         </div>
                         <div class="customer-actions" onclick="event.stopPropagation();">
                             <button class="btn btn-secondary btn-small" onclick="editCustomer('${customer.id}')">✏️</button>
@@ -1411,7 +1415,7 @@
                                 <div class="card-status-info">
                                     <span>Ngày ${card.paymentDay} hàng tháng</span>
                                     <span>•</span>
-                                    <span style="color: ${daysRemaining <= 3 ? 'var(--accent-red)' : 'inherit'};">Còn ${daysRemaining} ngày</span>
+                                    <span style="color: ${daysRemaining <= 3 ? 'var(--danger)' : 'inherit'};">Còn ${daysRemaining} ngày</span>
                                     ${isReminder ? '<span class="reminder-badge">🔔</span>' : ''}
                                 </div>
                             </div>
@@ -1463,7 +1467,7 @@
                     ${additionalFee !== 0 ? `
                     <div class="money-row">
                         <span>Phụ thu phí (${additionalFee > 0 ? 'Thu thêm' : 'Giảm trừ'}):</span>
-                        <span style="color: ${additionalFee > 0 ? 'var(--accent-red)' : 'var(--primary-green)'};">
+                        <span style="color: ${additionalFee > 0 ? 'var(--danger)' : 'var(--primary)'};">
                             <strong>${additionalFee > 0 ? '+' : ''}${formatMoney(additionalFee)}</strong>
                         </span>
                     </div>
@@ -1533,7 +1537,7 @@
                     ${feeBreakdown}
                     <div class="money-row" style="background: rgba(124, 179, 66, 0.1); padding: 8px; margin: 0 -12px; padding-left: 12px; padding-right: 12px;">
                         <span><strong>TỔNG TIỀN PHÍ:</strong></span>
-                        <span style="color: var(--accent-red); font-size: 1.05rem;">
+                        <span style="color: var(--danger); font-size: 1.05rem;">
                             <strong>${formatMoney(totalFee)}</strong>
                         </span>
                     </div>
@@ -1922,7 +1926,7 @@
             notification.className = 'notification';
             notification.textContent = message;
             if (type === 'error') {
-                notification.style.background = 'var(--accent-red)';
+                notification.style.background = 'var(--danger)';
             }
             document.body.appendChild(notification);
             setTimeout(() => notification.remove(), 3000);
@@ -2026,7 +2030,7 @@
                     <div style="margin-bottom: 8px;">
                         ${breakdown.join('<br>')}
                     </div>
-                    <div style="border-top: 1px solid var(--accent-red); padding-top: 8px; margin-top: 8px;">
+                    <div style="border-top: 1px solid var(--danger); padding-top: 8px; margin-top: 8px;">
                         <strong>Tổng phí ${monthCount} tháng: ${formatMoney(totalFee)}</strong>
                     </div>
                 `;
