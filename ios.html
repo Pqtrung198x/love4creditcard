@@ -1387,27 +1387,23 @@
                 
                 const result = totalWithdraw - totalDeposit - totalFee;
                 const resultClass = result > 0 ? 'negative' : result < 0 ? 'positive' : '';
+                const resultIcon = result > 0 ? '💸' : result < 0 ? '💰' : '⚖️';
                 
                 return `
                     <div class="customer-card" onclick="viewCustomer('${customer.id}')">
                         <div class="customer-name">${customer.name}</div>
-                        <div class="customer-footer">
-                            <div class="stat-item">
-                                <div class="stat-label">Số thẻ</div>
-                                <div class="stat-value">${cardCount}</div>
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
+                            <div style="font-size: 15px; font-weight: 600; color: var(${resultClass === 'negative' ? '--danger' : resultClass === 'positive' ? '--success' : '--text-gray'});">
+                                ${resultIcon} ${result === 0 ? 'Hòa' : formatMoney(Math.abs(result))}
                             </div>
-                            <div class="stat-item">
-                                <div class="stat-label">Kết quả</div>
-                                <div class="stat-value ${resultClass}">${result === 0 ? 'Hòa' : formatMoney(Math.abs(result))}</div>
+                            <div style="display: flex; gap: 8px;" onclick="event.stopPropagation()">
+                                <button class="icon-btn edit" onclick="editCustomer('${customer.id}')" style="width: 32px; height: 32px; padding: 0;">
+                                    <i class="fas fa-pen" style="font-size: 13px;"></i>
+                                </button>
+                                <button class="icon-btn delete" onclick="deleteCustomer('${customer.id}')" style="width: 32px; height: 32px; padding: 0;">
+                                    <i class="fas fa-trash" style="font-size: 13px;"></i>
+                                </button>
                             </div>
-                        </div>
-                        <div class="customer-actions" onclick="event.stopPropagation()">
-                            <button class="icon-btn edit" onclick="editCustomer('${customer.id}')">
-                                <i class="fas fa-pen"></i> Sửa
-                            </button>
-                            <button class="icon-btn delete" onclick="deleteCustomer('${customer.id}')">
-                                <i class="fas fa-trash"></i> Xóa
-                            </button>
                         </div>
                     </div>
                 `;
