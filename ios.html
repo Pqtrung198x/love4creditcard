@@ -742,11 +742,18 @@
         <!-- Header Banner -->
         <div class="header-banner">
             <div class="header-top">
-                <div>
-                    <div style="font-size: 14px; color: var(--text-gray); margin-bottom: 4px;">Chào mừng 👋</div>
+                <div style="display: flex; align-items: center; gap: 10px;">
+                    <div style="font-size: 24px;">💳</div>
                     <div class="app-name">Đáo Hạn PQT</div>
                 </div>
-                <div class="app-logo">PQT</div>
+                <div style="display: flex; gap: 8px; align-items: center;">
+                    <button onclick="location.reload()" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: var(--text-white); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-sync-alt"></i>
+                    </button>
+                    <button onclick="toggleTheme()" style="width: 36px; height: 36px; border-radius: 50%; background: rgba(255,255,255,0.1); border: none; color: var(--text-white); font-size: 16px; cursor: pointer; display: flex; align-items: center; justify-content: center;">
+                        <i class="fas fa-moon" id="themeIcon"></i>
+                    </button>
+                </div>
             </div>
             <div class="search-box">
                 <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm khách hàng...">
@@ -929,6 +936,20 @@
                         <label class="form-label">Phụ thu phí (VNĐ)</label>
                         <input type="text" class="form-input money-input" id="additionalFee" placeholder="100,000 hoặc -50,000">
                         <div class="form-hint">Số dương: thu thêm | Số âm: giảm trừ | Để trống: không phụ thu</div>
+                    </div>
+
+                    <div class="form-group" style="background: rgba(255,107,107,0.1); padding: 12px; border-radius: 12px; border: 1px solid rgba(255,107,107,0.2);">
+                        <label class="form-label" style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                            <span>🔒 Chi phí đầu vào (%)</span>
+                            <button type="button" onclick="toggleInputCost()" style="background: transparent; border: none; color: var(--text-white); font-size: 18px; cursor: pointer; padding: 4px;">
+                                <i class="fas fa-eye" id="inputCostToggle"></i>
+                            </button>
+                        </label>
+                        <input type="number" class="form-input" id="inputCostPercent" step="0.1" value="0" placeholder="VD: 1.5" style="background: var(--bg-darker);">
+                        <div class="form-hint" style="color: var(--danger);">⚠️ Thông tin bí mật - không hiển thị cho khách</div>
+                        <div id="inputCostValue" style="margin-top: 8px; padding: 8px; background: var(--bg-darker); border-radius: 8px; font-weight: 600; display: none;">
+                            Chi phí: <span id="inputCostAmount">******</span>
+                        </div>
                     </div>
 
                     <div class="form-group" style="border-top: 1.5px solid var(--border-dim); padding-top: 16px; margin-top: 16px;">
@@ -1302,6 +1323,19 @@
             return new Intl.NumberFormat('vi-VN').format(num) + '₫';
         }
 
+        // Short format for display (500k, 1tr, etc)
+        function formatMoneyShort(num) {
+            const absNum = Math.abs(num);
+            if (absNum >= 1000000) {
+                const tr = absNum / 1000000;
+                return (num < 0 ? '-' : '') + (tr % 1 === 0 ? tr : tr.toFixed(1)) + 'tr';
+            } else if (absNum >= 1000) {
+                const k = absNum / 1000;
+                return (num < 0 ? '-' : '') + (k % 1 === 0 ? k : k.toFixed(0)) + 'k';
+            }
+            return num + '₫';
+        }
+
         function getBankInfo(bankId) {
             return BANKS.find(b => b.id === bankId) || { id: bankId, name: bankId };
         }
@@ -1370,31 +1404,28 @@
 
             grid.innerHTML = filtered.map(customer => {
                 const cardCount = customer.cards ? customer.cards.length : 0;
-                let totalDeposit = 0, totalWithdraw = 0, totalFee = 0;
+                let totalProfit = 0; // LỢI NHUẬN = CHỈ PHÍ
                 
                 if (customer.cards) {
                     customer.cards.forEach(card => {
-                        totalDeposit += card.depositAmount || 0;
-                        totalWithdraw += card.withdrawAmount || 0;
                         if (card.multiMonth && card.multiMonth.enabled) {
-                            totalFee += card.multiMonth.totalFee;
+                            totalProfit += card.multiMonth.totalFee;
                         } else {
                             const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
-                            totalFee += baseFee + (card.additionalFee || 0);
+                            totalProfit += baseFee + (card.additionalFee || 0);
                         }
                     });
                 }
                 
-                const result = totalWithdraw - totalDeposit - totalFee;
-                const resultClass = result > 0 ? 'negative' : result < 0 ? 'positive' : '';
-                const resultIcon = result > 0 ? '💸' : result < 0 ? '💰' : '⚖️';
+                const profitClass = totalProfit > 0 ? 'positive' : '';
+                const profitIcon = totalProfit > 0 ? '💰' : '⚖️';
                 
                 return `
                     <div class="customer-card" onclick="viewCustomer('${customer.id}')">
                         <div class="customer-name">${customer.name}</div>
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-top: 8px;">
-                            <div style="font-size: 15px; font-weight: 600; color: var(${resultClass === 'negative' ? '--danger' : resultClass === 'positive' ? '--success' : '--text-gray'});">
-                                ${resultIcon} ${result === 0 ? 'Hòa' : formatMoney(Math.abs(result))}
+                            <div style="font-size: 15px; font-weight: 600; color: var(--success);">
+                                ${profitIcon} ${formatMoneyShort(totalProfit)}
                             </div>
                             <div style="display: flex; gap: 8px;" onclick="event.stopPropagation()">
                                 <button class="icon-btn edit" onclick="editCustomer('${customer.id}')" style="width: 32px; height: 32px; padding: 0;">
@@ -1617,27 +1648,24 @@
             }
 
             let totalCreditLimit = 0, totalCurrentBalance = 0;
-            let totalDeposit = 0, totalWithdraw = 0, totalFee = 0;
+            let totalProfit = 0; // LỢI NHUẬN = CHỈ PHÍ
 
             customer.cards.forEach(card => {
                 totalCreditLimit += card.creditLimit;
                 totalCurrentBalance += card.currentBalance;
-                totalDeposit += card.depositAmount;
-                totalWithdraw += card.withdrawAmount;
                 
                 if (card.multiMonth && card.multiMonth.enabled) {
-                    totalFee += card.multiMonth.totalFee;
+                    totalProfit += card.multiMonth.totalFee;
                 } else {
-                    totalFee += calculateFee(card.feePercent, card.feeCalculation, card.depositAmount, card.withdrawAmount, card.additionalFee);
+                    const baseFee = Math.round((card.feeCalculation === 'withdraw' ? card.withdrawAmount : card.depositAmount) * card.feePercent / 100);
+                    totalProfit += baseFee + (card.additionalFee || 0);
                 }
             });
 
             const totalAvailable = totalCreditLimit - totalCurrentBalance;
-            const finalResult = calculateFinalResult(totalDeposit, totalWithdraw, totalFee);
-            const resultDisplay = formatResult(finalResult);
 
             container.innerHTML = `
-                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--purple-end) 0%, var(--purple-start) 100%); color: white;">
+                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--purple-start), var(--purple-end)); color: white;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <div>
                             <div style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">${customer.name}</div>
@@ -1645,20 +1673,28 @@
                                 <i class="fas fa-phone"></i> ${customer.phone}
                             </div>
                         </div>
-                        <div style="text-align: right;">
-                            <div style="font-size: 12px; opacity: 0.8;">Tổng thẻ</div>
-                            <div style="font-size: 24px; font-weight: 700;">${customer.cards.length}</div>
-                        </div>
                     </div>
-                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px; padding-top: 12px; border-top: 1px solid rgba(255,255,255,0.3);">
+                    <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Số thẻ</div>
+                            <div style="font-size: 16px; font-weight: 700;">${customer.cards.length}</div>
+                        </div>
+                        <div>
+                            <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">💰 Lợi nhuận</div>
+                            <div style="font-size: 16px; font-weight: 700;">${formatMoneyShort(totalProfit)}</div>
+                        </div>
                         <div>
                             <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Tổng hạn mức</div>
-                            <div style="font-size: 14px; font-weight: 600;">${formatMoney(totalCreditLimit)}</div>
+                            <div style="font-size: 16px; font-weight: 700;">${formatMoneyShort(totalCreditLimit)}</div>
                         </div>
                         <div>
                             <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Còn trống</div>
-                            <div style="font-size: 14px; font-weight: 600;">${formatMoney(totalAvailable)}</div>
+                            <div style="font-size: 16px; font-weight: 700;">${formatMoneyShort(totalAvailable)}</div>
                         </div>
+                    </div>
+                </div>
+            `;
+        }
                         <div>
                             <div style="font-size: 11px; opacity: 0.8; margin-bottom: 2px;">Tổng phí</div>
                             <div style="font-size: 14px; font-weight: 600;">${formatMoney(totalFee)}</div>
@@ -1973,8 +2009,14 @@
             document.getElementById('feePercent').value = card.feePercent;
             document.getElementById('feeCalculation').value = card.feeCalculation;
             document.getElementById('additionalFee').value = card.additionalFee ? card.additionalFee.toLocaleString('en-US') : '';
+            document.getElementById('inputCostPercent').value = card.inputCostPercent || 0;
             document.getElementById('cardStatus').value = card.status;
             document.getElementById('cardNotes').value = card.notes || '';
+            
+            // Reset input cost visibility
+            inputCostVisible = false;
+            document.getElementById('inputCostToggle').className = 'fas fa-eye';
+            document.getElementById('inputCostValue').style.display = 'none';
             
             // Load multi-month data
             if (card.multiMonth && card.multiMonth.enabled) {
@@ -2058,6 +2100,7 @@
                 feePercent: parseFloat(document.getElementById('feePercent').value),
                 feeCalculation: document.getElementById('feeCalculation').value,
                 additionalFee: parseMoneyInput(document.getElementById('additionalFee').value),
+                inputCostPercent: parseFloat(document.getElementById('inputCostPercent').value) || 0,
                 multiMonth: multiMonthData,
                 status: document.getElementById('cardStatus').value,
                 notes: document.getElementById('cardNotes').value,
@@ -2096,6 +2139,30 @@
                 showToast('✅ Đã lưu thẻ!');
             }
         });
+
+        // Input Cost Toggle
+        let inputCostVisible = false;
+        function toggleInputCost() {
+            inputCostVisible = !inputCostVisible;
+            const icon = document.getElementById('inputCostToggle');
+            const valueDiv = document.getElementById('inputCostValue');
+            const amountSpan = document.getElementById('inputCostAmount');
+            
+            if (inputCostVisible) {
+                icon.className = 'fas fa-eye-slash';
+                valueDiv.style.display = 'block';
+                
+                // Calculate input cost
+                const withdrawAmount = parseMoneyInput(document.getElementById('withdrawAmount').value) || 0;
+                const inputCostPercent = parseFloat(document.getElementById('inputCostPercent').value) || 0;
+                const inputCost = Math.round(withdrawAmount * inputCostPercent / 100);
+                amountSpan.textContent = formatMoneyShort(inputCost);
+            } else {
+                icon.className = 'fas fa-eye';
+                valueDiv.style.display = 'none';
+                amountSpan.textContent = '******';
+            }
+        }
 
         // Multi-month functions
         function toggleMultiMonth() {
