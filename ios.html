@@ -725,15 +725,17 @@
             <h1 class="login-title">Đáo Hạn PQT</h1>
             <p class="login-subtitle">Quản lý đáo hạn thẻ tín dụng chuyên nghiệp</p>
             
-            <div class="form-group">
-                <label class="form-label form-label-required">Mật khẩu</label>
-                <input type="password" class="form-input" id="loginPassword" placeholder="Nhập mật khẩu" autofocus>
-            </div>
-            
-            <button class="btn btn-primary" onclick="login()">
-                <i class="fas fa-sign-in-alt"></i>
-                Đăng nhập
-            </button>
+            <form id="loginForm" onsubmit="login(); return false;">
+                <div class="form-group">
+                    <label class="form-label">Mật khẩu</label>
+                    <input type="password" class="form-input" id="loginPassword" placeholder="Nhập mật khẩu" required autofocus>
+                </div>
+                
+                <button type="submit" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i>
+                    Đăng nhập
+                </button>
+            </form>
         </div>
     </div>
 
@@ -2444,13 +2446,6 @@
 
         // Search
         document.getElementById('searchInput').addEventListener('input', renderCustomers);
-
-        // Enter key on login
-        document.getElementById('loginPassword').addEventListener('keypress', function(e) {
-            if (e.key === 'Enter') {
-                login();
-            }
-        });
 
         // Init
         function init() {
