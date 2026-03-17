@@ -12,25 +12,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
     <style>
         :root {
-            --primary: #6366F1;
-            --primary-dark: #4F46E5;
-            --secondary: #8B5CF6;
-            --accent: #06B6D4;
-            --success: #10B981;
-            --danger: #EF4444;
-            --warning: #F59E0B;
-            --dark: #1E293B;
-            --darker: #0F172A;
-            --gray: #64748B;
-            --gray-light: #94A3B8;
-            --bg: #F8FAFC;
-            --card-bg: #FFFFFF;
-            --text: #1E293B;
-            --text-secondary: #64748B;
-            --border: #E2E8F0;
-            --shadow: rgba(0, 0, 0, 0.06);
-            --shadow-lg: rgba(0, 0, 0, 0.1);
-            --overlay: rgba(0, 0, 0, 0.5);
+            --bg-dark: #0A0E27;
+            --bg-darker: #070B1E;
+            --card-dark: #1A1F3A;
+            --purple-start: #6B4FBB;
+            --purple-end: #8B6FDB;
+            --purple-light: #A78BFA;
+            --text-white: #FFFFFF;
+            --text-gray: #8E92BC;
+            --text-dim: #6B7096;
+            --success: #00C896;
+            --danger: #FF6B6B;
+            --warning: #FFB84D;
+            --border-dim: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.2);
+            --shadow-lg: rgba(107, 79, 187, 0.3);
+            --overlay: rgba(0, 0, 0, 0.7);
             
             --safe-top: env(safe-area-inset-top);
             --safe-bottom: env(safe-area-inset-bottom);
@@ -39,24 +36,21 @@
         }
 
         [data-theme="dark"] {
-            --primary: #818CF8;
-            --primary-dark: #6366F1;
-            --secondary: #A78BFA;
-            --accent: #22D3EE;
-            --success: #34D399;
-            --danger: #F87171;
-            --warning: #FBBF24;
-            --dark: #E2E8F0;
-            --darker: #F8FAFC;
-            --gray: #94A3B8;
-            --gray-light: #64748B;
-            --bg: #0F172A;
-            --card-bg: #1E293B;
-            --text: #E2E8F0;
-            --text-secondary: #94A3B8;
-            --border: #334155;
-            --shadow: rgba(0, 0, 0, 0.3);
-            --shadow-lg: rgba(0, 0, 0, 0.5);
+            --bg-dark: #0A0E27;
+            --bg-darker: #070B1E;
+            --card-dark: #1A1F3A;
+            --purple-start: #6B4FBB;
+            --purple-end: #8B6FDB;
+            --purple-light: #A78BFA;
+            --text-white: #FFFFFF;
+            --text-gray: #8E92BC;
+            --text-dim: #6B7096;
+            --success: #00C896;
+            --danger: #FF6B6B;
+            --warning: #FFB84D;
+            --border-dim: rgba(255, 255, 255, 0.1);
+            --shadow: rgba(0, 0, 0, 0.2);
+            --shadow-lg: rgba(107, 79, 187, 0.3);
             --overlay: rgba(0, 0, 0, 0.7);
         }
 
@@ -69,8 +63,8 @@
 
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'SF Pro Text', 'Helvetica Neue', sans-serif;
-            background: var(--bg);
-            color: var(--text);
+            background: var(--bg-dark);
+            color: var(--text-white);
             overflow-x: hidden;
             transition: var(--transition);
             padding-bottom: calc(70px + var(--safe-bottom));
@@ -78,14 +72,13 @@
 
         /* Header Banner */
         .header-banner {
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: var(--bg-dark);
             padding: calc(var(--safe-top) + 16px) 16px 20px;
             color: white;
-            box-shadow: 0 4px 12px var(--shadow-lg);
+            box-shadow: none;
             position: sticky;
             top: 0;
             z-index: 100;
-            backdrop-filter: blur(10px);
         }
 
         .header-top {
@@ -104,17 +97,19 @@
         .app-logo {
             width: 44px;
             height: 44px;
-            background: rgba(255, 255, 255, 0.95);
-            border-radius: 12px;
+            background: linear-gradient(135deg, var(--purple-start), var(--purple-end));
+            border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-size: 26px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.15);
+            font-size: 16px;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 4px 12px var(--shadow-lg);
         }
 
         .app-name {
-            font-size: 22px;
+            font-size: 24px;
             font-weight: 700;
             letter-spacing: -0.5px;
             text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -148,21 +143,21 @@
             width: 100%;
             padding: 14px 45px 14px 16px;
             border-radius: 14px;
-            border: none;
-            background: rgba(255, 255, 255, 0.95);
+            border: 1px solid var(--border-dim);
+            background: var(--card-dark);
             font-size: 16px;
-            color: var(--text);
+            color: var(--text-white);
             font-family: inherit;
-            backdrop-filter: blur(10px);
         }
 
         .search-input::placeholder {
-            color: var(--text-secondary);
+            color: var(--text-gray);
         }
 
         .search-input:focus {
             outline: none;
-            background: white;
+            background: var(--card-dark);
+            border-color: var(--purple-end);
         }
 
         .search-icon {
@@ -170,7 +165,7 @@
             right: 16px;
             top: 50%;
             transform: translateY(-50%);
-            color: var(--text-secondary);
+            color: var(--text-gray);
             font-size: 18px;
             pointer-events: none;
         }
@@ -185,7 +180,7 @@
 
         .tabs {
             display: flex;
-            background: var(--card-bg);
+            background: var(--card-dark);
             border-radius: 14px;
             padding: 4px;
             box-shadow: 0 2px 12px var(--shadow);
@@ -199,7 +194,7 @@
             border-radius: 10px;
             font-size: 14px;
             font-weight: 600;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             cursor: pointer;
             transition: var(--transition);
             display: flex;
@@ -213,9 +208,9 @@
         }
 
         .tab.active {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--purple-start), var(--purple-end));
             color: white;
-            box-shadow: 0 2px 8px rgba(74, 144, 226, 0.3);
+            box-shadow: 0 2px 8px var(--shadow-lg);
         }
 
         /* Customer Grid */
@@ -236,13 +231,13 @@
         }
 
         .customer-card {
-            background: var(--card-bg);
+            background: var(--card-dark);
             border-radius: 16px;
             padding: 16px;
             box-shadow: 0 2px 8px var(--shadow);
             cursor: pointer;
             transition: var(--transition);
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-dim);
         }
 
         .customer-card:active {
@@ -264,7 +259,7 @@
         .customer-name {
             font-size: 16px;
             font-weight: 700;
-            color: var(--text);
+            color: var(--text-white);
             margin-bottom: 4px;
             overflow: hidden;
             text-overflow: ellipsis;
@@ -273,7 +268,7 @@
 
         .customer-phone {
             font-size: 13px;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             display: flex;
             align-items: center;
             gap: 4px;
@@ -294,8 +289,8 @@
             height: 36px;
             border-radius: 10px;
             border: none;
-            background: var(--bg);
-            color: var(--text);
+            background: var(--bg-dark);
+            color: var(--text-white);
             font-size: 15px;
             cursor: pointer;
             transition: var(--transition);
@@ -309,7 +304,7 @@
         }
 
         .icon-btn.edit {
-            color: var(--primary);
+            color: var(--purple-end);
             background: rgba(74, 144, 226, 0.1);
         }
 
@@ -323,7 +318,7 @@
             grid-template-columns: repeat(2, 1fr);
             gap: 8px;
             padding-top: 12px;
-            border-top: 1px solid var(--border);
+            border-top: 1px solid var(--border-dim);
         }
 
         .stat-item {
@@ -332,7 +327,7 @@
 
         .stat-label {
             font-size: 11px;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             margin-bottom: 4px;
             text-transform: uppercase;
             letter-spacing: 0.5px;
@@ -341,7 +336,7 @@
         .stat-value {
             font-size: 15px;
             font-weight: 700;
-            color: var(--primary);
+            color: var(--purple-end);
         }
 
         .stat-value.negative {
@@ -358,8 +353,8 @@
             bottom: 0;
             left: 0;
             right: 0;
-            background: var(--card-bg);
-            border-top: 1px solid var(--border);
+            background: var(--bg-darker);
+            border-top: 1px solid var(--border-dim);
             padding: 8px 8px calc(8px + var(--safe-bottom));
             display: flex;
             justify-content: space-around;
@@ -378,13 +373,13 @@
             border-radius: 12px;
             cursor: pointer;
             transition: var(--transition);
-            color: var(--text-secondary);
+            color: var(--text-gray);
             max-width: 80px;
         }
 
         .nav-item.active {
-            background: rgba(74, 144, 226, 0.1);
-            color: var(--primary);
+            background: transparent;
+            color: var(--purple-end);
         }
 
         .nav-item:active {
@@ -425,7 +420,7 @@
         }
 
         .modal-content {
-            background: var(--card-bg);
+            background: var(--card-dark);
             border-radius: 24px 24px 0 0;
             width: 100%;
             max-height: 90vh;
@@ -442,9 +437,9 @@
         .modal-header {
             position: sticky;
             top: 0;
-            background: var(--card-bg);
+            background: var(--card-dark);
             padding: 20px;
-            border-bottom: 1px solid var(--border);
+            border-bottom: 1px solid var(--border-dim);
             display: flex;
             justify-content: space-between;
             align-items: center;
@@ -455,7 +450,7 @@
         .modal-title {
             font-size: 22px;
             font-weight: 700;
-            color: var(--text);
+            color: var(--text-white);
         }
 
         .close-btn {
@@ -463,8 +458,8 @@
             height: 36px;
             border-radius: 50%;
             border: none;
-            background: var(--bg);
-            color: var(--text);
+            background: var(--bg-dark);
+            color: var(--text-white);
             font-size: 20px;
             cursor: pointer;
             display: flex;
@@ -490,7 +485,7 @@
             display: block;
             font-size: 14px;
             font-weight: 600;
-            color: var(--text);
+            color: var(--text-white);
             margin-bottom: 8px;
         }
 
@@ -503,9 +498,9 @@
             width: 100%;
             padding: 14px 16px;
             border-radius: 12px;
-            border: 1.5px solid var(--border);
-            background: var(--bg);
-            color: var(--text);
+            border: 1.5px solid var(--border-dim);
+            background: var(--bg-dark);
+            color: var(--text-white);
             font-size: 16px;
             font-family: inherit;
             transition: var(--transition);
@@ -513,8 +508,8 @@
 
         .form-input:focus, .form-select:focus, .form-textarea:focus {
             outline: none;
-            border-color: var(--primary);
-            background: var(--card-bg);
+            border-color: var(--purple-end);
+            background: var(--card-dark);
             box-shadow: 0 0 0 4px rgba(74, 144, 226, 0.1);
         }
 
@@ -525,7 +520,7 @@
 
         .form-hint {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             margin-top: 6px;
         }
 
@@ -558,14 +553,15 @@
         }
 
         .btn-primary {
-            background: var(--primary);
+            background: linear-gradient(135deg, var(--purple-start), var(--purple-end));
             color: white;
-            box-shadow: 0 4px 12px rgba(74, 144, 226, 0.3);
+            box-shadow: 0 4px 12px var(--shadow-lg);
         }
 
         .btn-secondary {
-            background: var(--bg);
-            color: var(--text);
+            background: var(--card-dark);
+            color: var(--text-white);
+            border: 1px solid var(--border-dim);
         }
 
         .btn-danger {
@@ -580,8 +576,8 @@
             top: calc(var(--safe-top) + 80px);
             left: 50%;
             transform: translateX(-50%);
-            background: var(--card-bg);
-            color: var(--text);
+            background: var(--card-dark);
+            color: var(--text-white);
             padding: 14px 24px;
             border-radius: 14px;
             box-shadow: 0 6px 20px var(--shadow-lg);
@@ -589,7 +585,7 @@
             font-weight: 600;
             z-index: 2000;
             animation: toastIn 0.3s;
-            border: 1px solid var(--border);
+            border: 1px solid var(--border-dim);
             max-width: calc(100% - 40px);
         }
 
@@ -608,7 +604,7 @@
         .empty-state {
             text-align: center;
             padding: 60px 20px;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             grid-column: 1 / -1;
         }
 
@@ -632,16 +628,16 @@
             align-items: center;
             min-height: 100vh;
             padding: 40px 20px;
-            background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%);
+            background: linear-gradient(135deg, var(--purple-end) 0%, var(--purple-start) 100%);
         }
 
         .login-card {
-            background: white;
+            background: var(--card-dark);
             border-radius: 24px;
             padding: 40px 28px;
             width: 100%;
             max-width: 400px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
         }
 
         .login-logo {
@@ -655,13 +651,13 @@
             font-weight: 700;
             text-align: center;
             margin-bottom: 8px;
-            color: var(--text);
+            color: var(--text-white);
         }
 
         .login-subtitle {
             font-size: 15px;
             text-align: center;
-            color: var(--text-secondary);
+            color: var(--text-gray);
             margin-bottom: 32px;
             line-height: 1.5;
         }
@@ -691,8 +687,8 @@
         .spinner {
             width: 40px;
             height: 40px;
-            border: 4px solid var(--border);
-            border-top-color: var(--primary);
+            border: 4px solid var(--border-dim);
+            border-top-color: var(--purple-end);
             border-radius: 50%;
             animation: spin 0.8s linear infinite;
             margin: 20px auto;
@@ -708,16 +704,16 @@
         }
 
         ::-webkit-scrollbar-track {
-            background: var(--bg);
+            background: var(--bg-dark);
         }
 
         ::-webkit-scrollbar-thumb {
-            background: var(--border);
+            background: var(--border-dim);
             border-radius: 4px;
         }
 
         ::-webkit-scrollbar-thumb:hover {
-            background: var(--text-secondary);
+            background: var(--text-gray);
         }
     </style>
 </head>
@@ -746,18 +742,11 @@
         <!-- Header Banner -->
         <div class="header-banner">
             <div class="header-top">
-                <div class="app-title">
-                    <div class="app-logo">💳</div>
+                <div>
+                    <div style="font-size: 14px; color: var(--text-gray); margin-bottom: 4px;">Chào mừng 👋</div>
                     <div class="app-name">Đáo Hạn PQT</div>
                 </div>
-                <div style="display: flex; gap: 8px;">
-                    <button class="theme-toggle" onclick="location.reload()" aria-label="Refresh">
-                        <i class="fas fa-sync-alt"></i>
-                    </button>
-                    <button class="theme-toggle" onclick="toggleTheme()" aria-label="Toggle theme">
-                        <i class="fas fa-moon" id="themeIcon"></i>
-                    </button>
-                </div>
+                <div class="app-logo">PQT</div>
             </div>
             <div class="search-box">
                 <input type="text" class="search-input" id="searchInput" placeholder="🔍 Tìm khách hàng...">
@@ -942,7 +931,7 @@
                         <div class="form-hint">Số dương: thu thêm | Số âm: giảm trừ | Để trống: không phụ thu</div>
                     </div>
 
-                    <div class="form-group" style="border-top: 1.5px solid var(--border); padding-top: 16px; margin-top: 16px;">
+                    <div class="form-group" style="border-top: 1.5px solid var(--border-dim); padding-top: 16px; margin-top: 16px;">
                         <label class="form-label" style="display: flex; align-items: center; gap: 8px; cursor: pointer;">
                             <input type="checkbox" id="isMultiMonth" onchange="toggleMultiMonth()" style="width: auto; cursor: pointer;">
                             <span>📅 Đáo hạn nhiều tháng</span>
@@ -958,7 +947,7 @@
 
                         <div class="form-group">
                             <label class="form-label">Chi tiết từng tháng</label>
-                            <div id="monthlyAmounts" style="background: var(--bg); padding: 12px; border-radius: 12px;"></div>
+                            <div id="monthlyAmounts" style="background: var(--bg-dark); padding: 12px; border-radius: 12px;"></div>
                         </div>
 
                         <div class="form-group">
@@ -1019,7 +1008,7 @@
                     Đổi mật khẩu
                 </button>
                 
-                <div style="margin-top: 24px; padding-top: 24px; border-top: 1.5px solid var(--border);">
+                <div style="margin-top: 24px; padding-top: 24px; border-top: 1.5px solid var(--border-dim);">
                     <h3 style="margin-bottom: 12px; font-size: 16px; font-weight: 600;">📦 Đồng bộ dữ liệu</h3>
                     <button class="btn btn-secondary" onclick="exportData()">
                         <i class="fas fa-file-export"></i>
@@ -1448,9 +1437,9 @@
                 const resultClass = result > 0 ? 'negative' : result < 0 ? 'positive' : '';
                 
                 return `
-                    <div class="customer-card" onclick="viewArchiveMonth('${monthKey}')" style="background: linear-gradient(135deg, var(--card-bg) 0%, var(--bg) 100%);">
+                    <div class="customer-card" onclick="viewArchiveMonth('${monthKey}')" style="background: linear-gradient(135deg, var(--card-dark) 0%, var(--bg-dark) 100%);">
                         <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 10px;">
-                            <i class="fas fa-archive" style="color: var(--primary); font-size: 18px;"></i>
+                            <i class="fas fa-archive" style="color: var(--purple-end); font-size: 18px;"></i>
                             <div class="customer-name" style="margin: 0;">${getMonthName(monthKey)}</div>
                         </div>
                         <div class="customer-footer">
@@ -1463,7 +1452,7 @@
                                 <div class="stat-value ${resultClass}">${result === 0 ? 'Hòa' : formatMoney(Math.abs(result))}</div>
                             </div>
                         </div>
-                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-size: 12px; color: var(--text-secondary);">
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-dim); font-size: 12px; color: var(--text-gray);">
                             <i class="fas fa-coins"></i> Tổng phí: ${formatMoney(archive.stats.totalFee)}
                         </div>
                     </div>
@@ -1486,7 +1475,7 @@
             const resultDisplay = formatResult(result);
             
             let html = `
-                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%); color: white;">
+                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--purple-end) 0%, var(--purple-light) 100%); color: white;">
                     <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 12px;">
                         <i class="fas fa-archive" style="font-size: 24px;"></i>
                         <div style="font-size: 20px; font-weight: 700;">${getMonthName(monthKey)}</div>
@@ -1527,17 +1516,17 @@
                 
                 html += `
                     <div class="customer-card" style="margin-bottom: 10px;">
-                        <div style="font-size: 14px; font-weight: 700; color: var(--primary); margin-bottom: 4px;">${bank.name}</div>
-                        <div style="font-size: 13px; color: var(--text-secondary); margin-bottom: 8px;">
+                        <div style="font-size: 14px; font-weight: 700; color: var(--purple-end); margin-bottom: 4px;">${bank.name}</div>
+                        <div style="font-size: 13px; color: var(--text-gray); margin-bottom: 8px;">
                             <i class="fas fa-user"></i> ${card.customerName} • <i class="fas fa-phone"></i> ${card.customerPhone}
                         </div>
                         <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 6px; font-size: 12px;">
-                            <div><span style="color: var(--text-secondary);">Hạn mức:</span> <strong>${formatMoney(card.creditLimit)}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Nạp:</span> <strong>${formatMoney(card.depositAmount)}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Rút:</span> <strong>${formatMoney(card.withdrawAmount)}</strong></div>
-                            <div><span style="color: var(--text-secondary);">Phí:</span> <strong style="color: var(--danger);">${formatMoney(cardFee)}</strong></div>
+                            <div><span style="color: var(--text-gray);">Hạn mức:</span> <strong>${formatMoney(card.creditLimit)}</strong></div>
+                            <div><span style="color: var(--text-gray);">Nạp:</span> <strong>${formatMoney(card.depositAmount)}</strong></div>
+                            <div><span style="color: var(--text-gray);">Rút:</span> <strong>${formatMoney(card.withdrawAmount)}</strong></div>
+                            <div><span style="color: var(--text-gray);">Phí:</span> <strong style="color: var(--danger);">${formatMoney(cardFee)}</strong></div>
                         </div>
-                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 600;">
+                        <div style="margin-top: 8px; padding-top: 8px; border-top: 1px solid var(--border-dim); font-weight: 600;">
                             ${cardResultDisplay.icon} ${cardResultDisplay.text}
                         </div>
                     </div>
@@ -1652,7 +1641,7 @@
             const resultDisplay = formatResult(finalResult);
 
             container.innerHTML = `
-                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white;">
+                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--purple-end) 0%, var(--purple-start) 100%); color: white;">
                     <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 16px;">
                         <div>
                             <div style="font-size: 20px; font-weight: 700; margin-bottom: 4px;">${customer.name}</div>
@@ -1730,7 +1719,7 @@
                     } else if (card.status === 'processing') {
                         statusBadge = '<span style="background: var(--warning); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">⏳ Đang xử lý</span>';
                     } else {
-                        statusBadge = '<span style="background: var(--text-secondary); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">📵 Không liên hệ</span>';
+                        statusBadge = '<span style="background: var(--text-gray); color: white; padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">📵 Không liên hệ</span>';
                     }
                     
                     return `
@@ -1738,8 +1727,8 @@
                             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 12px;">
                                 <div style="flex: 1;">
                                     <div style="font-size: 16px; font-weight: 700; margin-bottom: 4px;">${bank.name}</div>
-                                    <div style="font-size: 13px; color: var(--text-secondary);">
-                                        Ngày ${card.paymentDay} • <span style="color: ${daysRemaining <= 3 ? 'var(--danger)' : 'var(--text)'};">Còn ${daysRemaining} ngày</span>
+                                    <div style="font-size: 13px; color: var(--text-gray);">
+                                        Ngày ${card.paymentDay} • <span style="color: ${daysRemaining <= 3 ? 'var(--danger)' : 'var(--text-white)'};">Còn ${daysRemaining} ngày</span>
                                     </div>
                                 </div>
                                 <div class="customer-actions" onclick="event.stopPropagation()">
@@ -1751,7 +1740,7 @@
                                     </button>
                                 </div>
                             </div>
-                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding-top: 12px; border-top: 1px solid var(--border);">
+                            <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 8px; padding-top: 12px; border-top: 1px solid var(--border-dim);">
                                 <div class="stat-item">
                                     <div class="stat-label">Hạn mức</div>
                                     <div class="stat-value">${formatMoney(card.creditLimit)}</div>
@@ -1763,7 +1752,7 @@
                             </div>
                             <div style="margin-top: 8px; display: flex; justify-content: space-between; align-items: center;">
                                 ${statusBadge}
-                                ${card.multiMonth && card.multiMonth.enabled ? '<span style="background: rgba(74, 144, 226, 0.1); color: var(--primary); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">📅 ' + card.multiMonth.monthCount + ' tháng</span>' : ''}
+                                ${card.multiMonth && card.multiMonth.enabled ? '<span style="background: rgba(74, 144, 226, 0.1); color: var(--purple-end); padding: 4px 8px; border-radius: 6px; font-size: 11px; font-weight: 600;">📅 ' + card.multiMonth.monthCount + ' tháng</span>' : ''}
                             </div>
                         </div>
                     `;
@@ -1790,7 +1779,7 @@
                 totalFee = card.multiMonth.totalFee;
                 feeBreakdown = `
                     <div style="background: rgba(74, 144, 226, 0.1); padding: 12px; border-radius: 12px; margin-bottom: 12px;">
-                        <div style="font-weight: 600; margin-bottom: 8px; color: var(--primary);">📅 Đáo ${card.multiMonth.monthCount} tháng:</div>
+                        <div style="font-weight: 600; margin-bottom: 8px; color: var(--purple-end);">📅 Đáo ${card.multiMonth.monthCount} tháng:</div>
                         ${card.multiMonth.monthlyAmounts.map(item => `
                             <div style="display: flex; justify-content: space-between; margin-bottom: 4px; font-size: 14px;">
                                 <span>Tháng ${item.month}: ${formatMoney(item.amount)} × ${card.feePercent}%</span>
@@ -1827,11 +1816,11 @@
             } else if (card.status === 'processing') {
                 statusBadge = '<span style="background: var(--warning); color: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">⏳ Chưa hoàn thành</span>';
             } else {
-                statusBadge = '<span style="background: var(--text-secondary); color: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">📵 Không liên hệ</span>';
+                statusBadge = '<span style="background: var(--text-gray); color: white; padding: 6px 12px; border-radius: 8px; font-size: 13px; font-weight: 600;">📵 Không liên hệ</span>';
             }
 
             document.getElementById('cardDetailContent').innerHTML = `
-                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--primary) 0%, var(--primary-dark) 100%); color: white;">
+                <div class="customer-card" style="margin-bottom: 16px; background: linear-gradient(135deg, var(--purple-end) 0%, var(--purple-start) 100%); color: white;">
                     <div style="font-size: 22px; font-weight: 700; margin-bottom: 8px;">${bank.name}</div>
                     <div style="opacity: 0.9; margin-bottom: 12px;">
                         <i class="fas fa-user"></i> ${customer.name} • <i class="fas fa-phone"></i> ${customer.phone}
@@ -1843,7 +1832,7 @@
                 </div>
 
                 <div class="customer-card" style="margin-bottom: 16px;">
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--primary);">📊 Thông tin thẻ</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--purple-end);">📊 Thông tin thẻ</div>
                     <div style="display: grid; grid-template-columns: repeat(2, 1fr); gap: 12px;">
                         <div>
                             <div class="stat-label">Hạn mức</div>
@@ -1859,11 +1848,11 @@
                         </div>
                         <div>
                             <div class="stat-label">Đến hạn</div>
-                            <div class="stat-value" style="font-size: 16px; color: ${daysRemaining <= 3 ? 'var(--danger)' : 'var(--text)'};">${daysRemaining} ngày</div>
+                            <div class="stat-value" style="font-size: 16px; color: ${daysRemaining <= 3 ? 'var(--danger)' : 'var(--text-white)'};">${daysRemaining} ngày</div>
                         </div>
                     </div>
-                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border);">
-                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--text-secondary);">
+                    <div style="margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-dim);">
+                        <div style="display: flex; justify-content: space-between; font-size: 14px; color: var(--text-gray);">
                             <span>Ngày sao kê: ${card.statementDay}</span>
                             <span>Ngày thanh toán: ${card.paymentDay}</span>
                         </div>
@@ -1871,7 +1860,7 @@
                 </div>
 
                 <div class="customer-card" style="margin-bottom: 16px;">
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--primary);">💰 Tính toán phí</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 12px; color: var(--purple-end);">💰 Tính toán phí</div>
                     <div style="display: flex; justify-content: space-between; margin-bottom: 8px;">
                         <span>Tiền nạp vào:</span>
                         <span style="font-weight: 600;">${formatMoney(card.depositAmount)}</span>
@@ -1890,15 +1879,15 @@
                     <div style="background: ${resultDisplay.class === 'positive' ? 'rgba(82, 196, 26, 0.1)' : resultDisplay.class === 'negative' ? 'rgba(255, 77, 79, 0.1)' : 'rgba(128, 128, 128, 0.1)'}; padding: 12px; border-radius: 12px;">
                         <div style="display: flex; justify-content: space-between; font-weight: 700;">
                             <span>KẾT QUẢ:</span>
-                            <span style="color: ${resultDisplay.class === 'positive' ? 'var(--success)' : resultDisplay.class === 'negative' ? 'var(--danger)' : 'var(--text)'}; font-size: 18px;">${resultDisplay.text}</span>
+                            <span style="color: ${resultDisplay.class === 'positive' ? 'var(--success)' : resultDisplay.class === 'negative' ? 'var(--danger)' : 'var(--text-white)'}; font-size: 18px;">${resultDisplay.text}</span>
                         </div>
                     </div>
                 </div>
 
                 ${card.notes ? `
                 <div class="customer-card">
-                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--primary);">📝 Ghi chú</div>
-                    <div style="color: var(--text-secondary); line-height: 1.6;">${card.notes}</div>
+                    <div style="font-size: 16px; font-weight: 700; margin-bottom: 8px; color: var(--purple-end);">📝 Ghi chú</div>
+                    <div style="color: var(--text-gray); line-height: 1.6;">${card.notes}</div>
                 </div>
                 ` : ''}
 
@@ -2133,7 +2122,7 @@
             for (let i = 1; i <= monthCount; i++) {
                 html += `
                     <div style="margin-bottom: 10px;">
-                        <label style="font-size: 13px; color: var(--text-secondary); display: block; margin-bottom: 6px; font-weight: 600;">
+                        <label style="font-size: 13px; color: var(--text-gray); display: block; margin-bottom: 6px; font-weight: 600;">
                             Tháng ${i}:
                         </label>
                         <input type="text" 
@@ -2179,7 +2168,7 @@
                     </div>
                 `;
             } else {
-                resultDiv.innerHTML = '<div style="color: var(--text-secondary); font-size: 14px;">Nhập số tiền từng tháng và phí % để xem dự tính</div>';
+                resultDiv.innerHTML = '<div style="color: var(--text-gray); font-size: 14px;">Nhập số tiền từng tháng và phí % để xem dự tính</div>';
             }
         }
 
