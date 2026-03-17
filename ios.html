@@ -1237,17 +1237,23 @@
 
         // Authentication
         function login() {
+            console.log('Login called');
             const password = document.getElementById('loginPassword').value;
+            console.log('Password:', password ? 'entered' : 'empty');
             if (!password) {
                 showToast('⚠️ Vui lòng nhập mật khẩu');
                 return;
             }
             
             const userHash = btoa(password);
+            console.log('Hash created');
             currentUser = userHash;
             localStorage.setItem('l4cc_user', userHash);
+            console.log('Saved to localStorage');
             loadUserData();
+            console.log('Data loaded');
             showMainApp();
+            console.log('Main app shown');
             showToast('✅ Đăng nhập thành công!');
         }
 
